@@ -14,6 +14,236 @@ knitr::opts_chunk$set(
 )
 ```
 
+# R package for penalized conditional logistic regression
+
+The R package "penalizedclr" provides an implementation of the penalized logistic regression model for matched case-control studies. It allows for different penalties in different blocks of covariates, and it is therefore particularly useful in the presence of multi-source omics data. Both L1 and L2 penalties are implemented. 
+Additionally, the package performs stability selection for variable selection in the penalized conditional regression model. 
+
+
+## Installation
+
+You can install the released version of penalizedclr from [CRAN](https://CRAN.R-project.org) with:
+
+
+```{r eval = FALSE}
+install.packages("penalizedclr")
+```
+
+
+And the development version from [GitHub](https://github.com/) with:
+
+```{r eval = FALSE}
+library(devtools)
+install_github("veradjordjilovic/penalizedclr")
+```
+
+Load the package with: 
+
 ```{r setup}
 library(penalizedclr)
 ```
+
+## Examples
+
+In this section we will provide examples of how to fit a penalized conditional regression model with source-specific penalty parameters and perform variable selection with penalizedclr.
+
+Initial settings and libraries to be loaded:
+
+```{r message=FALSE, warning=FALSE}
+set.seed(123)
+require(tidyverse)
+```
+
+### Data simulation
+
+We simulate a simple multi-source data set, with two groups of covariates. Each case is matched to one control, and the probability of case vs control in each stratum (case-control pair) is simulated from the linear predictor. An intercept is simulated for each stratum.
+
+```{r}
+# two groups of predictors
+p <- c(80, 20)
+
+# percent of non-null variables
+p_nz <- c(0.2, 0.8)
+m_nz <- round(p*p_nz, 0)
+
+# number of different strata (typically case-control pairs)
+K <- 125
+
+# number of cases and controls in each stratum
+n_cases <- 1
+n_ctrl <- 1
+
+
+# covariates
+X = cbind(matrix(rnorm(p[1] * K * (n_cases + n_ctrl), 0, 1), ncol = p[1]),
+          matrix(rnorm(p[2] * K * (n_cases + n_ctrl), 0, 2), ncol = p[2]))
+
+# coefficients
+beta <- as.matrix(c(rnorm(m_nz[1], 0, 0.8),
+                    rep(0, p[1] - m_nz[1]),
+                    rnorm(m_nz[2], 0.1, 0.4),
+                    rep(0, p[2] - m_nz[2])), ncol = 1)
+
+beta_stratum <- rep(rnorm(K, 0, 2), each= n_cases+n_ctrl)
+
+# stratum membership
+stratum <- rep(1:K, each= n_cases+n_ctrl)
+
+# linear predictor
+lin_pred <- beta_stratum + X %*% beta
+
+prob_case <- exp(lin_pred) / (1 + exp(lin_pred))
+
+
+# generate the response
+
+Y <- rep(0, length(stratum))
+
+data_sim <- as_tibble(data.frame(stratum = stratum, probability = prob_case,
+                                 obs_id = 1 : length(stratum)))
+data_sim_cases <- data_sim %>%
+  group_by(stratum)%>%
+  sample_n(n_cases, weight = probability)
+
+Y[data_sim_cases$obs_id] <- 1
+```
+
+### Penalized conditional logistic regression model: variable selection
+
+#### Case 1: Penalty parameters provided by the user
+
+Penalty parameters can be specified for each source of covariates. This code illustrate how to fit penalized.clr with penalty parameters specified by the user. 
+
+```{r}
+fit1 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
+                      lambda = c(6,7), p = p, standardize = TRUE)
+
+```
+fit1$penalized contains the regression coefficients for the penalized covariates. 
+
+
+```{r fig1, fig.height = 5, fig.width = 6}
+
+colf <- rep('darkblue', sum(p))
+colf[which(fit1$penalized == 0)] <- 'lightgray'
+
+plot(fit1$penalized, type = 'p', col = colf, ylab = 'Coefficients', xlab ='', xaxt='n')
+```
+
+
+
+We can compare these to the simulated coefficients: 
+
+```{r}
+nonzero_index <- (beta != 0) * 1
+table(fitted = (fit1$penalized != 0) * 1, nonzero_index)
+```
+Add comment on p and lambda dimensions.
+
+
+#### Case 2: Penalty parameters computed internally
+
+When the user does not specify the penalty parameters, they are computed from a sequence of reasonable values for L1 penalty for each data source and then optimized. 
+
+```{r}
+fit2 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
+                      p = p,
+                      standardize = TRUE)
+
+```
+
+The selected penalty coefficients are: 
+
+```{r}
+fit2$lambda
+```
+The estimated regression parameters are: 
+
+```{r fig2, fig.height = 5, fig.width = 6}
+
+colf <- rep('darkblue', sum(p))
+colf[which(fit2$penalized == 0)] <- 'lightgray'
+
+plot(fit2$penalized, type = 'p', col = colf, ylab = 'Coefficients', xlab ='', xaxt='n')
+```
+
+
+
+Compare the estimated parameters to the simulated coefficients: 
+
+```{r}
+nonzero_index <- (beta != 0) * 1
+table(fitted = (fit2$penalized != 0) * 1, nonzero_index)
+```
+
+
+#### Case 3: Blocks not provided
+
+This code implements penalizedclr when no information is given about the blocks of predictors (p). Only one penalty parameter will be calculated and used to . 
+
+```{r}
+fit3 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
+                      standardize = TRUE)
+```
+
+The selected penalty coefficient is: 
+
+```{r}
+fit3$lambda
+```
+The estimated regression parameters are: 
+
+```{r fig3, fig.height = 5, fig.width = 6}
+
+colf <- rep('darkblue', sum(p))
+colf[which(fit3$penalized == 0)] <- 'lightgray'
+
+plot(fit3$penalized, type = 'p', col = colf, ylab = 'Coefficients', xlab ='', xaxt='n')
+```
+
+
+
+Compare the estimated parameters to the simulated coefficients: 
+
+```{r}
+nonzero_index <- (beta != 0) * 1
+table(fitted = (fit3$penalized != 0) * 1, nonzero_index)
+```
+
+
+#### Case 4: One block of covariates not penalized
+
+TO DO. 
+
+
+
+### Penalized conditional logistic regression model: stability selection
+
+#### Case 1: penalty parameters given by user
+
+```{r}
+
+```
+
+#### Case 2: penalty parameters computed internally
+
+
+```{r}
+
+```
+
+#### Case 3: penalty parameters computed externally
+
+
+```{r}
+
+```
+
+#### Case 4: covariates divided into blocks
+
+
+```{r}
+
+```
+
+Add comment on B. 
