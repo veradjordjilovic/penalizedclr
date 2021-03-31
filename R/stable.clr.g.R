@@ -58,7 +58,7 @@
 #'
 #' # when lambda.list is not provided,
 #' # it is computed within the function (slightly different results might occur due to the
-#' randomness inherent to cross-validation)
+#' # randomness inherent to cross-validation)
 #'
 #' stable.g2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
 #'                           p = p)

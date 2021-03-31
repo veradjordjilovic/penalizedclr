@@ -1,12 +1,16 @@
 Package: penalizedclr
 Title: Integrative Penalized Conditional Logistic Regression With Penalty factors
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R: c(
     person(given = "Vera",
            family = "Djordjilovi\'c",
            role = c("aut", "cre"),
            email = "vera.djordjilovic@unive.it",
-           comment = c(ORCID = "https://orcid.org/0000-0002-7670-3111"))
+           comment = c(ORCID = "https://orcid.org/0000-0002-7670-3111")), 
+   person(given = "Erica",
+           family = "Ponzi",
+           role = c("aut"),
+           email = "erica.ponzi@medisin.uio.no"))
 Description: Implements L1 and/or L2 penalized conditional logistic regression with penalty 
     factors allowing for integration of different data sources. Implements
     stability selection for variable selection. 
@@ -19,7 +23,8 @@ Imports:
 	      penalized,
 	      survival,
 	      clogitL1,
-	      stats
+	      stats, 
+	      tidyverse	      
 Suggests:
     parallel,
     knitr,
