@@ -1,5 +1,5 @@
 ---
-title: "penalizedclr"
+title: "Vignette for penalizedclr"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{penalizedclr}
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# R package for penalized conditional logistic regression
+## Introduction
 
 The R package "penalizedclr" provides an implementation of the penalized logistic regression model for matched case-control studies. It allows for different penalties in different blocks of covariates, and it is therefore particularly useful in the presence of multi-source omics data. Both L1 and L2 penalties are implemented. 
 Additionally, the package performs stability selection for variable selection in the penalized conditional regression model. 
@@ -45,7 +45,7 @@ library(penalizedclr)
 
 ## Examples
 
-In this section we will provide examples of how to fit a penalized conditional regression model with source-specific penalty parameters and perform variable selection with penalizedclr.
+In this section we will provide examples of how to fit a penalized conditional regression model with source-specific penalty parameters and perform variable selection with penalizedclr. Different choices will be explored for the penalty (L1, or elastic-net via $\alpha$) and for the penalty parameters $\lambda$. We will show how to include information about the different blocks of data and to specify source-specific penalties. 
 
 Initial settings and libraries to be loaded:
 
@@ -110,42 +110,32 @@ Y[data_sim_cases$obs_id] <- 1
 
 ### Penalized conditional logistic regression model: variable selection
 
+The function "penalizedclr" is used to fit a penalized conditional logistic regression model with different penalties for different blocks of covariates. The penalty parameter are used to include a L1 penalty term in the model and can be specified by the user, or computed internally. This is done by cross-validation of each data layer separately to estimate the optimal value of L1 penalty. A different mixing parameter can be specified for elastic-net penalties.
+
+
 #### Case 1: Penalty parameters provided by the user
 
-Penalty parameters can be specified for each source of covariates. This code illustrate how to fit penalized.clr with penalty parameters specified by the user. 
+Penalty parameters can be specified for each source of covariates. This code illustrate how to fit penalized.clr with penalty parameters specified by the user. Here $\mathbf{Y}$ is the response vector, $\mathbf{X}$ is the multi-source matrix of covariates, $stratum$ is the vector of ids of the matching pairs (or sets), and $p$ is the vector of block dimensions. This has to have the same dimensions as the vector of penalty parameters $\lambda$. It is possible to standardize the variables by setting standardize = TRUE in the function (FALSE by default option).
 
-```{r}
+```{r results = 'hide'}
 fit1 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
                       lambda = c(6,7), p = p, standardize = TRUE)
 
 ```
-fit1$penalized contains the regression coefficients for the penalized covariates. 
-
-
-```{r fig1, fig.height = 5, fig.width = 6}
-
-colf <- rep('darkblue', sum(p))
-colf[which(fit1$penalized == 0)] <- 'lightgray'
-
-plot(fit1$penalized, type = 'p', col = colf, ylab = 'Coefficients', xlab ='', xaxt='n')
-```
-
-
-
-We can compare these to the simulated coefficients: 
+fit1$penalized contains the regression coefficients for the penalized covariates.  We can compare these to the simulated coefficients: 
 
 ```{r}
 nonzero_index <- (beta != 0) * 1
 table(fitted = (fit1$penalized != 0) * 1, nonzero_index)
 ```
-Add comment on p and lambda dimensions.
+
 
 
 #### Case 2: Penalty parameters computed internally
 
-When the user does not specify the penalty parameters, they are computed from a sequence of reasonable values for L1 penalty for each data source and then optimized. 
+When the user does not specify the penalty parameters, they are computed from a sequence of values for L1 penalty for each data source and then optimized via cross-validation. 
 
-```{r}
+```{r  results = 'hide'}
 fit2 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
                       p = p,
                       standardize = TRUE)
@@ -157,31 +147,17 @@ The selected penalty coefficients are:
 ```{r}
 fit2$lambda
 ```
-The estimated regression parameters are: 
-
-```{r fig2, fig.height = 5, fig.width = 6}
-
-colf <- rep('darkblue', sum(p))
-colf[which(fit2$penalized == 0)] <- 'lightgray'
-
-plot(fit2$penalized, type = 'p', col = colf, ylab = 'Coefficients', xlab ='', xaxt='n')
-```
+We recommend to inspect manually the obtained $\lambda$ parameters, for example to avoid too high $\lambda$s that would result into too low selection probabilities, and to keep the proportion of relevant covariates across the different sources. Note that different runs of cross-validation will return different values of $\lambda$s.
 
 
 
-Compare the estimated parameters to the simulated coefficients: 
-
-```{r}
-nonzero_index <- (beta != 0) * 1
-table(fitted = (fit2$penalized != 0) * 1, nonzero_index)
-```
 
 
 #### Case 3: Blocks not provided
 
-This code implements penalizedclr when no information is given about the blocks of predictors (p). Only one penalty parameter will be calculated and used to . 
+This code implements penalizedclr when no information is given about the blocks of predictors (p). Only one penalty parameter will be calculated and used to perform variable selection. 
 
-```{r}
+```{r  results = 'hide'}
 fit3 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
                       standardize = TRUE)
 ```
@@ -191,59 +167,137 @@ The selected penalty coefficient is:
 ```{r}
 fit3$lambda
 ```
-The estimated regression parameters are: 
-
-```{r fig3, fig.height = 5, fig.width = 6}
-
-colf <- rep('darkblue', sum(p))
-colf[which(fit3$penalized == 0)] <- 'lightgray'
-
-plot(fit3$penalized, type = 'p', col = colf, ylab = 'Coefficients', xlab ='', xaxt='n')
-```
 
 
 
-Compare the estimated parameters to the simulated coefficients: 
 
-```{r}
-nonzero_index <- (beta != 0) * 1
-table(fitted = (fit3$penalized != 0) * 1, nonzero_index)
-```
 
 
 #### Case 4: One block of covariates not penalized
 
-TO DO. 
+This code implements penalizedclr by penalized only parts of the covariates (the first block here), and leaving the remaining block unpenalized. 
 
+```{r  results = 'hide'}
+X1 <- X[, 1:p[1]]
+X2 <- X[, (p[1]+1):(p[1]+p[2])]
+fit4 <- penalized.clr(response = Y, penalized = X1, unpenalized = X2, 
+                      stratum = stratum, p = p[1], 
+                      standardize = TRUE)
+```
+
+This can be particularly useful when performing variable selection on omics variables (penalized) and fitting the  regression model including additional clinical covariates (not penalized).
+
+#### Case 5: Changing the L1 penalty
+
+The package penalizedclr allows for different penalties than the lasso (L1). This is useful in presence of highly correlated covariates. L2 and L1 penalties can be combined in an elastic net framework by specifying a different value for the mixing parameter $\alpha$ in the function. 
+
+```{r  results = 'hide'}
+fit2 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
+                      p = p,
+                      standardize = TRUE, alpha = 0.6)
+```
 
 
 ### Penalized conditional logistic regression model: stability selection
 
+The function "stable.clr" performs stability selection for variable selection via penalized conditional logistic regression. For each combination of penalty parameters, $2B$ subsamples of  $\lfloor n/2 \rfloor$ matched pairs are taken and a penalized model is estimated. $B$ is set to 100 by default, but can be changed by the user. Note that this choice will have an impact on the computation time, and higher values of $B$ will lead to a slower computation.  The function returns a list containing the selection probabilities of each covariate, i. e. the proportion of estimated models in which the associated coefficient estimate is different from zero. 
+
 #### Case 1: penalty parameters given by user
 
-```{r}
-
-```
-
-#### Case 2: penalty parameters computed internally
 
 
 ```{r}
-
+stable1 <- stable.clr(response = Y,
+                      penalized = X, stratum = stratum,
+                      lambda.seq = c(10,20))
 ```
-
-#### Case 3: penalty parameters computed externally
-
+Covariates with selection probability higher than 0.6:
 
 ```{r}
+which(stable1$P>0.6)
 
 ```
+
+
+
+#### Case 2: penalty parameters computed externally
+
+It is possible to compute the penalty parameters via the function "find.default.lambda". It performs cross-validation to determine a sequence of $\lambda$s for L1 (or elastic-net, depending on the specified value for $\alpha$) penalties. The number of folds is set to 10 by default but can also be specified by the user.
+
+```{r}
+lambda.seq <- find.default.lambda(response = Y, 
+                                  stratum = stratum, 
+                                  penalized = X, 
+                                  alpha=1,
+                                  nfolds = 10)
+
+lambda.seq
+```
+
+```{r}
+stable2 <- stable.clr(response = Y,
+                      penalized = X, stratum = stratum,
+                      lambda.seq = lambda.seq)
+```
+
+Covariates with selection probability higher than 0.6:
+
+```{r}
+which(stable2$P>0.6)
+
+```
+
+#### Case 3: penalty parameters computed internally
+
+If we do not specify how to compute the penalty parameters as in case 2, "stable.clr" will compute them by default by using "find.default.lambda" with default options. We only need to run: 
+
+```{r}
+stable3 <- stable.clr(response = Y,
+                      penalized = X, 
+                      stratum = stratum)
+```
+
+The selected $\lambda$s are: 
+
+```{r}
+stable3$lambda.seq
+```
+
+
+Covariates with selection probability higher than 0.6:
+
+```{r}
+which(stable3$P>0.6)
+
+```
+
+
 
 #### Case 4: covariates divided into blocks
 
+This code implements stability selection for variable selection via penalized conditional logistic regression taking into account the block separation among variables ($p$). We compute the different $\lambda$s externally via "find.default.lambda" and then run "stable.clr.g". This function is an extension of "stable.clr" that allows for diffferent groups (blocks) of covariates.
 
 ```{r}
 
+lambda.list <- find.default.lambda(response = Y,
+                    penalized = X, stratum = stratum,
+                    p = p)
+
+lambda.list
 ```
 
-Add comment on B. 
+
+```{r}
+stable.g1 <- stable.clr.g(response = Y,
+                          penalized = X,
+                          stratum = stratum,
+                          p = p,
+                          lambda.list = lambda.list)
+```
+
+
+```{r}
+
+which(stable.g1$P>0.6)
+```
+
