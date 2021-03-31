@@ -72,7 +72,7 @@ stable.clr.g <- function(response,
                          stratum,
                          penalized,
                          unpenalized = NULL,
-                         p,
+                         p = NULL,
                          lambda.list = NULL,
                          alpha = 1,
                          B = 100,
@@ -85,12 +85,13 @@ stable.clr.g <- function(response,
     unpenalized <- as.matrix(unpenalized, nrow = nrow(penalized))
   }
 
-  if (missing(p) | length(p) == 1){
+  if (missing(p)| is.null(p) | length(p) == 1){
     warning("valid p is not provided:
             all covariates are penalized equally.")
     if (is.null(lambda.list)) {
+      
     temp <- stable.clr(response, stratum, penalized,
-                       unpenalized,
+                       unpenalized, lambda.seq = NULL, 
                        alpha, B, parallel, standardize, event)}else{
     temp <- stable.clr(response, stratum, penalized,
                                             unpenalized, lambda.seq = unlist(lambda.list),

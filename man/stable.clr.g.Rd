@@ -9,7 +9,7 @@ stable.clr.g(
   stratum,
   penalized,
   unpenalized = NULL,
-  p,
+  p = NULL,
   lambda.list = NULL,
   alpha = 1,
   B = 100,
