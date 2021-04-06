@@ -9,7 +9,7 @@ stable.clr.g(
   stratum,
   penalized,
   unpenalized = NULL,
-  p,
+  p = NULL,
   lambda.list = NULL,
   alpha = 1,
   B = 100,
@@ -89,7 +89,7 @@ stable.g1 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
 
 # when lambda.list is not provided,
 # it is computed within the function (slightly different results might occur due to the
-randomness inherent to cross-validation)
+# randomness inherent to cross-validation)
 
 stable.g2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
                           p = p)

@@ -58,7 +58,7 @@
 #'
 #' # when lambda.list is not provided,
 #' # it is computed within the function (slightly different results might occur due to the
-#' randomness inherent to cross-validation)
+#' # randomness inherent to cross-validation)
 #'
 #' stable.g2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
 #'                           p = p)
@@ -72,7 +72,7 @@ stable.clr.g <- function(response,
                          stratum,
                          penalized,
                          unpenalized = NULL,
-                         p,
+                         p = NULL,
                          lambda.list = NULL,
                          alpha = 1,
                          B = 100,
@@ -85,12 +85,13 @@ stable.clr.g <- function(response,
     unpenalized <- as.matrix(unpenalized, nrow = nrow(penalized))
   }
 
-  if (missing(p) | length(p) == 1){
+  if (missing(p)| is.null(p) | length(p) == 1){
     warning("valid p is not provided:
             all covariates are penalized equally.")
     if (is.null(lambda.list)) {
+      
     temp <- stable.clr(response, stratum, penalized,
-                       unpenalized,
+                       unpenalized, lambda.seq = NULL, 
                        alpha, B, parallel, standardize, event)}else{
     temp <- stable.clr(response, stratum, penalized,
                                             unpenalized, lambda.seq = unlist(lambda.list),
