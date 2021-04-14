@@ -7,8 +7,9 @@
 #' @param lambda.seq a sequence of non-negative values to be used as tuning
 #'    parameters for L1
 #'
-#' @return A numeric vector \code{Pilambda}
-#'         giving selection probabilities for each penalized covariate.
+#' @return A list with a  numeric vector \code{Pilambda}
+#'         giving selection probabilities for each penalized covariate, and
+#'         a sequence \code{lambda.seq} used.
 #'
 #'
 #' @export
