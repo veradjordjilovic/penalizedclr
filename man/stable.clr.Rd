@@ -42,8 +42,9 @@ alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never 
 should be considered a success in the logistic regression.}
 }
 \value{
-A numeric vector \code{Pilambda}
-giving selection probabilities for each penalized covariate.
+A list with a  numeric vector \code{Pilambda}
+giving selection probabilities for each penalized covariate, and
+a sequence \code{lambda.seq} used.
 }
 \description{
 Performs stability selection for conditional logistic regression models with L1 and/or L2 penalty.
