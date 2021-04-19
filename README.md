@@ -314,7 +314,7 @@ stable.g1 <- stable.clr.g(response = Y,
 
 which(stable.g1$P>0.6)
 ```
-Note that if <tt>p</tt>$ is not specified, the package will automatically run <tt>stable.clr</tt> and apply equal penalties for all covariates. 
+Note that if <tt>p</tt> is not specified, the package will automatically run <tt>stable.clr</tt> and apply equal penalties for all covariates. 
 
 # References
 
