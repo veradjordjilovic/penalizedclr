@@ -249,7 +249,7 @@ stable1 <- stable.clr(response = Y,
 ```
 The function returns a list with two elements:
 
-1. <tt>Pilambda</tt> a numeric vector giving estimates of selection probabilities for each penalized covarite.
+1. <tt>Pilambda</tt> a numeric vector giving estimates of selection probabilities for each penalized covariate.
 
 2. <tt>lambda.seq</tt> a sequence of L1 penalties used.  
 
