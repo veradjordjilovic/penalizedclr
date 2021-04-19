@@ -85,18 +85,20 @@ lambda.list <- find.default.lambda(response = Y,
                                    penalized = X, stratum = stratum, p = p)
 
 # perform stability selection
+\dontrun{
 stable.g1 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
-                         p = p, lambda.list = lambda.list)
+                         p = p, lambda.list = lambda.list)}
 
 # when lambda.list is not provided,
 # it is computed within the function (slightly different results might occur due to the
 # randomness inherent to cross-validation)
-
+\dontrun{
 stable.g2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
-                          p = p)
+                          p = p)}
 
 # if p is not provided, all covariates are penalized equally
-stable.g3 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)
+\dontrun{
+stable.g3 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)}
 
 }
 \references{
