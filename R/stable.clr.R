@@ -1,6 +1,6 @@
 #' Stability selection based on penalized conditional logistic regression
 #'
-#' Performs stability selection for conditional logistic regression models with L1 and/or L2 penalty.
+#' Performs stability selection for conditional logistic regression models with L1 and L2 penalty.
 #'
 #' @inheritParams penalized.clr
 #' @inheritParams subsample.clr

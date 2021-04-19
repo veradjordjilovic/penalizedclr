@@ -1,6 +1,6 @@
 #' Penalized conditional logistic regression
 #'
-#' Fits conditional logistic regression models with L1 and/or L2 penalty allowing
+#' Fits conditional logistic regression models with L1 and L2 penalty allowing
 #' for different penalties for different blocks of covariates.
 #'
 #' @param response The response variable, either a 0/1 vector or a factor with two levels.

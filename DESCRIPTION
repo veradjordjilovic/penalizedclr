@@ -1,5 +1,5 @@
 Package: penalizedclr
-Title: Integrative Penalized Conditional Logistic Regression With Penalty factors
+Title: Integrative Penalized Conditional Logistic Regression With Penalty Factors
 Version: 0.0.0.9000
 Authors@R: c(
     person(given = "Vera",
@@ -11,8 +11,8 @@ Authors@R: c(
            family = "Ponzi",
            role = c("aut"),
            email = "erica.ponzi@medisin.uio.no"))
-Description: Implements L1 and/or L2 penalized conditional logistic regression with penalty 
-    factors allowing for integration of different data sources. Implements
+Description: Implements L1 and L2 penalized conditional logistic regression with penalty 
+    factors allowing for integration of multiple data sources. Implements
     stability selection for variable selection. 
 License: MIT + file LICENSE
 Encoding: UTF-8

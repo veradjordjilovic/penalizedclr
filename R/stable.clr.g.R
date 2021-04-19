@@ -1,6 +1,6 @@
 #' Stability selection based on penalized conditional logistic regression
 #'
-#' Performs stability selection for conditional logistic regression models with L1 and/or L2 penalty allowing
+#' Performs stability selection for conditional logistic regression models with L1 and L2 penalty allowing
 #' for different penalties for different blocks of covariates (different data sources).
 #'
 #'
@@ -89,9 +89,9 @@ stable.clr.g <- function(response,
     warning("valid p is not provided:
             all covariates are penalized equally.")
     if (is.null(lambda.list)) {
-      
+
     temp <- stable.clr(response, stratum, penalized,
-                       unpenalized, lambda.seq = NULL, 
+                       unpenalized, lambda.seq = NULL,
                        alpha, B, parallel, standardize, event)}else{
     temp <- stable.clr(response, stratum, penalized,
                                             unpenalized, lambda.seq = unlist(lambda.list),
