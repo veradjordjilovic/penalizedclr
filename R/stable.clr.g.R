@@ -1,7 +1,8 @@
 #' Stability selection based on penalized conditional logistic regression
 #'
-#' Performs stability selection for conditional logistic regression models with L1 and L2 penalty allowing
-#' for different penalties for different blocks (groups) of covariates (different data sources).
+#' Performs stability selection for conditional logistic regression models with L1 and L2 penalty
+#' allowing for different penalties for different blocks
+#' (groups) of covariates (different data sources).
 #'
 #'
 #'

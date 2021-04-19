@@ -1,6 +1,7 @@
 #' Stability selection based on penalized conditional logistic regression
 #'
-#' Performs stability selection for conditional logistic regression models with L1 and L2 penalty.
+#' Performs stability selection for conditional logistic regression models with
+#' L1 and L2 penalty.
 #'
 #'
 #' @inheritParams penalized.clr
@@ -14,7 +15,8 @@
 #'
 #'
 #' @export
-#' #' set.seed(123)
+#' @examples
+#'  set.seed(123)
 #'
 #' # simulate covariates (pure noise in two blocks of 20 and 80 variables)
 #' X <- cbind(matrix(rnorm(4000, 0, 1), ncol = 20), matrix(rnorm(16000, 2, 0.6), ncol = 80))
@@ -25,11 +27,10 @@
 #' # the response
 #' Y <- rep(c(1, 0), 100)
 #'
-#' # list of L1 penalties
-#' lambda.list <- find.default.lambda(response = Y,
+#' # sequence of L1 penalties
+#' lambda.seq <- find.default.lambda(response = Y,
 #'                                    penalized = X,
-#'                                    stratum = stratum,
-#'                                    lambda.seq = c(2,5))
+#'                                    stratum = stratum)
 #'
 #' # perform stability selection
 #' stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
@@ -42,8 +43,8 @@
 #' stable2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)
 #'
 #'
-#'#' @seealso  \code{\link{stable.clr.g}} for stability selection
-#'  in penalized conditional logistic regression with multiple penalties for block structured covariates.
+#' @seealso  \code{\link{stable.clr.g}} for stability selection
+#' in penalized conditional logistic regression with multiple penalties for block structured covariates.
 
 
 stable.clr <- function(response,

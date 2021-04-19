@@ -53,8 +53,9 @@ giving selection probabilities for all penalized covariates and
 \code{lambda.list}.
 }
 \description{
-Performs stability selection for conditional logistic regression models with L1 and L2 penalty allowing
-for different penalties for different blocks (groups) of covariates (different data sources).
+Performs stability selection for conditional logistic regression models with L1 and L2 penalty
+allowing for different penalties for different blocks
+(groups) of covariates (different data sources).
 }
 \details{
 This function implements stability selection (Meinshausen and Bühlmann, 2010) in
