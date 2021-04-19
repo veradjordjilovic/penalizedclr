@@ -47,5 +47,5 @@ giving selection probabilities for each penalized covariate, and
 a sequence \code{lambda.seq} used.
 }
 \description{
-Performs stability selection for conditional logistic regression models with L1 and/or L2 penalty.
+Performs stability selection for conditional logistic regression models with L1 and L2 penalty.
 }

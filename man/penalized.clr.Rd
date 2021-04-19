@@ -52,7 +52,7 @@ A list with the following elements:
 }
 }
 \description{
-Fits conditional logistic regression models with L1 and/or L2 penalty allowing
+Fits conditional logistic regression models with L1 and L2 penalty allowing
 for different penalties for different blocks of covariates.
 }
 \details{
