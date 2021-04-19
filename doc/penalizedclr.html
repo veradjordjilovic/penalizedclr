@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>penalizedclr: an R package for penalized conditional logistic regression</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore"><tt>penalizedclr</tt>: an R package for penalized conditional logistic regression</h1>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The R package <tt>penalizedclr</tt> provides an implementation of the penalized logistic regression model that can be used in the analysis of matched case-control studies. The implementation allows to apply different penalties to different blocks of covariates, and is therefore particularly useful in the presence of multi-source heterogenous data, such as multiple layers of omics measurements. Both L1 and L2 penalties are implemented. Additionally, the package implements stability selection to allow for variable selection in the considered regression model.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install the released version of <tt>penalizedclr</tt> from <a href="https://CRAN.R-project.org">CRAN</a> with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;penalizedclr&quot;</span>)</span></code></pre></div>
+<p>And the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;veradjordjilovic/penalizedclr&quot;</span>)</span></code></pre></div>
+<p>Load the package with:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(penalizedclr)</span></code></pre></div>
+</div>
+<div id="the-setting" class="section level2">
+<h2>The setting</h2>
+<p>Assume that we have <span class="math inline">\(K\)</span> independent matched case-control pairs <span class="math inline">\((Y_{ki}, X_{ki})\)</span>, where <span class="math inline">\(Y_{ki}\)</span>, <span class="math inline">\(k=1,\ldots,K;\)</span> <span class="math inline">\(i=1,2,\)</span> is a binary variable indicating case control status (1 if case, 0 if control) and <span class="math inline">\(X_{ki}\)</span> is the associated <span class="math inline">\(p\)</span>-dimensional vector of covariates. The conditional logistic regression models the probability of being a case given that the observation belongs to the <span class="math inline">\(k\)</span>-th pair as: <span class="math display">\[
+{\mathrm {logit}}\left[P(Y_{ki}=1 \mid S=k)\right] = \beta_{0k} + \beta^{T}X_{ki}, \quad k\in\left\{1,\ldots, K\right\}, i\in\left\{1,2\right\}
+\]</span> where <span class="math inline">\(S\)</span> is the matched pair id, <span class="math inline">\(\beta_{0k}\)</span> is the pair specific intercept and <span class="math inline">\(\beta=(\beta_1, \ldots,\beta_p)^T\)</span> is a <span class="math inline">\(p\)</span>-dimensional vector of fixed effects.</p>
+<p>In the present package we:</p>
+<ul>
+<li><p>estimate <span class="math inline">\(\beta\)</span> in the high dimensional setting in which the number of covariates <span class="math inline">\(p\)</span> is much higher than the number of pairs <span class="math inline">\(K\)</span>. We consider a penalized conditional logistic regression, which adds a penalty to the conditional log likelihood. Motivated by current medical applications considering clinical and molecular data, we allow <span class="math inline">\(X_{ki}\)</span> to be a merge of heteregenous data sources;</p></li>
+<li><p>perform stability selection to identify important variables, that is, variables for which <span class="math inline">\(\beta_j\neq 0\)</span>, <span class="math inline">\(j\in\left\{1,\ldots,p\right\}\)</span>.</p></li>
+</ul>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>In this section we provide examples of how to fit a penalized conditional regression model with source-specific penalty parameters and how to perform variable selection with <tt>penalizedclr</tt>.</p>
+<p>Initial settings and libraries to be loaded:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(tidyverse)</span></code></pre></div>
+<div id="data-generation" class="section level3">
+<h3>Data generation</h3>
+<p>We generate a simple multi-source data set, with two groups of covariates containing 80 and 20 variables, respectively. As specified above, each case is matched to a control, and the probability of being a case in each stratum (case-control pair) is obtained from the linear predictor. An intercept is generated independently for each stratum.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># two groups of predictors</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">80</span>, <span class="dv">20</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># percentage and number of non-null variables</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>p_nz <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>m_nz <span class="ot">&lt;-</span> <span class="fu">round</span>(p<span class="sc">*</span>p_nz, <span class="dv">0</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># number of different strata (case-control pairs)</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>K <span class="ot">&lt;-</span> <span class="dv">125</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># number of cases and controls in each stratum (not necessarily 1:1 matching, other designs are also allowed)</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>n_cases <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>n_ctrl <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># generating covariates</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>X <span class="ot">=</span> <span class="fu">cbind</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(p[<span class="dv">1</span>] <span class="sc">*</span> K <span class="sc">*</span> (n_cases <span class="sc">+</span> n_ctrl), <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">ncol =</span> p[<span class="dv">1</span>]),</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>          <span class="fu">matrix</span>(<span class="fu">rnorm</span>(p[<span class="dv">2</span>] <span class="sc">*</span> K <span class="sc">*</span> (n_cases <span class="sc">+</span> n_ctrl), <span class="dv">0</span>, <span class="dv">2</span>), <span class="at">ncol =</span> p[<span class="dv">2</span>]))</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># coefficients</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">c</span>(<span class="fu">rnorm</span>(m_nz[<span class="dv">1</span>], <span class="dv">0</span>, <span class="fl">0.8</span>),</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">rep</span>(<span class="dv">0</span>, p[<span class="dv">1</span>] <span class="sc">-</span> m_nz[<span class="dv">1</span>]),</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">rnorm</span>(m_nz[<span class="dv">2</span>], <span class="fl">0.1</span>, <span class="fl">0.4</span>),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">rep</span>(<span class="dv">0</span>, p[<span class="dv">2</span>] <span class="sc">-</span> m_nz[<span class="dv">2</span>])), <span class="at">ncol =</span> <span class="dv">1</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>beta_stratum <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">rnorm</span>(K, <span class="dv">0</span>, <span class="dv">2</span>), <span class="at">each=</span> n_cases<span class="sc">+</span>n_ctrl)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co"># stratum membership</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>stratum <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span>K, <span class="at">each=</span> n_cases<span class="sc">+</span>n_ctrl)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co"># linear predictor</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>lin_pred <span class="ot">&lt;-</span> beta_stratum <span class="sc">+</span> X <span class="sc">%*%</span> beta</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>prob_case <span class="ot">&lt;-</span> <span class="fu">exp</span>(lin_pred) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(lin_pred))</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co"># generate the response</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(stratum))</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>data_sim <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(<span class="fu">data.frame</span>(<span class="at">stratum =</span> stratum,</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">probability =</span> prob_case,</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">obs_id =</span> <span class="dv">1</span> <span class="sc">:</span> <span class="fu">length</span>(stratum)))</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>data_sim_cases <span class="ot">&lt;-</span> data_sim <span class="sc">%&gt;%</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(stratum)<span class="sc">%&gt;%</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sample_n</span>(n_cases, <span class="at">weight =</span> probability)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>Y[data_sim_cases<span class="sc">$</span>obs_id] <span class="ot">&lt;-</span> <span class="dv">1</span></span></code></pre></div>
+</div>
+<div id="penalized-conditional-logistic-regression-model-fit" class="section level3">
+<h3>Penalized conditional logistic regression: model fit</h3>
+<p>The function <tt>penalized.clr</tt> fits a penalized conditional logistic regression model with different penalties for different blocks of covariates. The L1 penalty parameter <code>lambda</code> (a numeric vector of the length equal to the number of blocks) can be specified by the user or computed internally. In the latter case, cross-validation is performed internally for each data layer separately. It is also possible to apply elastic net penalty through parameter <code>alpha</code>.</p>
+<div id="case-1-penalty-parameters-provided-by-the-user" class="section level4">
+<h4>Case 1: Penalty parameters provided by the user</h4>
+<p>This code illustrates how to fit <tt>penalized.clr</tt> with penalty parameters specified by the user. Here <tt>Y</tt> is the response vector, <tt>X</tt> is the multi-source matrix of covariates, <tt>stratum</tt> is the vector of ids of the matching pairs, and <tt>p</tt> is the vector of block dimensions. It has the same dimension as the vector of penalty parameters <tt>lambda</tt>. Penalty parameters are thus specified for each data source, i.e., a block of covariates. It is possible to standardize the variables by setting <tt>standardize = TRUE</tt> (<tt>FALSE</tt> by default).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fit1 <span class="ot">&lt;-</span> <span class="fu">penalized.clr</span>(<span class="at">response =</span> Y, <span class="at">penalized =</span> X, <span class="at">stratum =</span> stratum,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">lambda =</span> <span class="fu">c</span>(<span class="dv">6</span>,<span class="dv">7</span>), <span class="at">p =</span> p, <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The function returns a list with elements:</p>
+<ol style="list-style-type: decimal">
+<li><p><tt>penalized</tt> - Regression coefficients for the penalized covariates.</p></li>
+<li><p><tt>unpenalized</tt> - Regression coefficients for the unpenalized covariates.</p></li>
+<li><p><tt>converged</tt> - Whether the fitting process was judged to be converged.</p></li>
+<li><p><tt>lambda</tt> - The tuning parameter for L1 used.</p></li>
+<li><p><tt>alpha</tt> - The elastic net mixing parameter used.</p></li>
+</ol>
+<p>For instance, <code>fit1$penalized</code> is a numeric vector containing the regression coefficients for the penalized covariates. We can compare estimated coefficients with the true coefficients (the ones that generated our data), by constructing a <code>2 x 2</code> contingency table cross-tabulating true non-zero and estimated non-zero coefficients:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nonzero_index <span class="ot">&lt;-</span> (beta <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">*</span> <span class="dv">1</span> <span class="co">#index of nonzero coefficients</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="at">fitted =</span> (fit1<span class="sc">$</span>penalized <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">*</span> <span class="dv">1</span>, nonzero_index)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       nonzero_index</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; fitted  0  1</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      0 51 17</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      1 17 15</span></span></code></pre></div>
+</div>
+<div id="case-2-penalty-parameters-computed-internally" class="section level4">
+<h4>Case 2: Penalty parameters computed internally</h4>
+<p>When the user does not specify the penalty parameters, they are computed internally for each data source separately based on cross-validation.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">penalized.clr</span>(<span class="at">response =</span> Y, <span class="at">penalized =</span> X, <span class="at">stratum =</span> stratum,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">p =</span> p,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The selected penalty coefficients are:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fit2<span class="sc">$</span>lambda</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 4.958049 5.641397</span></span></code></pre></div>
+<p>The package uses fast cross-validation implemented in the R package <tt>clogitL1</tt> (see the function <tt>find.default.lambda</tt> described below). We recommend to inspect manually the obtained <code>lambda</code> parameters. It is also recommended to investigate different ratios of data-source specific penalties (see, for instance, Boulesteix et al. 2017 and examples of penalty grids therein). Note that cross validation depends on random data splits, and different runs will return different values of <code>lambda</code>.</p>
+</div>
+<div id="case-3-blocks-not-provided" class="section level4">
+<h4>Case 3: Blocks not provided</h4>
+<p>This code shows what happens when no information is given about the blocks of predictors (<code>p</code>). In this case, all covariates are considered to form a single block and are penalized equally.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">penalized.clr</span>(<span class="at">response =</span> Y, <span class="at">penalized =</span> X, <span class="at">stratum =</span> stratum,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>The selected penalty coefficient is:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fit3<span class="sc">$</span>lambda</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 4.62712</span></span></code></pre></div>
+</div>
+<div id="case-4-unpenalized-covariates" class="section level4">
+<h4>Case 4: Unpenalized covariates</h4>
+<p>Somethimes, a subset of covariates should be excluded from penalization. This can be achieved by specifying the <code>unpenalized</code> argument. In what follows, we penalize the first block of covariates, and leave the remaining block unpenalized.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>X1 <span class="ot">&lt;-</span> X[, <span class="dv">1</span><span class="sc">:</span>p[<span class="dv">1</span>]]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>X2 <span class="ot">&lt;-</span> X[, (p[<span class="dv">1</span>]<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>(p[<span class="dv">1</span>]<span class="sc">+</span>p[<span class="dv">2</span>])]</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fit4 <span class="ot">&lt;-</span> <span class="fu">penalized.clr</span>(<span class="at">response =</span> Y, <span class="at">penalized =</span> X1, <span class="at">unpenalized =</span> X2, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">stratum =</span> stratum, <span class="at">p =</span> p[<span class="dv">1</span>], </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">standardize =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>This can be particularly useful when performing variable selection on omics variables (penalized) while adjusting for clinical covariates that should not be penalized.</p>
+</div>
+<div id="case-5-elastic-net-penalty" class="section level4">
+<h4>Case 5: Elastic net penalty</h4>
+<p>The package <tt>penalizedclr</tt> is not limited to L1, i.e. lasso, penalty. While L1 penalty is more suited for variable selection, in the presence of highly correlated covariates, it can be useful to add small amount of L2 penalty. The two can be combined in an elastic net framework by specifying the mixing parameter <code>alpha</code>. Default <code>alpha=1</code> gives lasso.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fit2 <span class="ot">&lt;-</span> <span class="fu">penalized.clr</span>(<span class="at">response =</span> Y, <span class="at">penalized =</span> X, <span class="at">stratum =</span> stratum,</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">p =</span> p,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">standardize =</span> <span class="cn">TRUE</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="penalized-conditional-logistic-regression-stability-selection" class="section level3">
+<h3>Penalized conditional logistic regression: stability selection</h3>
+<p>The function <tt>stable.clr</tt> performs stability selection (Meinshausen and Bühlmann 2010 and Shah and Samworth 2013) for variable selection in penalized conditional logistic regression. For details on stability selection, we refer to the original publications. Briefly, a set of <span class="math inline">\(L1\)</span> penalties is considered, and for each considered value of the of the penalty, <span class="math inline">\(2B\)</span> random subsamples of <span class="math inline">\(\lfloor K/2 \rfloor\)</span> matched pairs are taken and a penalized model is estimated. For each covariate and penalty value, selection probability is estimated as the proportion of estimated models in which the associated coefficient estimate is different from zero. Finally, the overall selection probability of a variable is obtained by taking the maximum selection probability over all considered penalty values.</p>
+<p>Parameter <span class="math inline">\(B\)</span> is set to 100 by default, but can be changed by the user. Note that this choice will have an impact on the computation time, and higher values of <span class="math inline">\(B\)</span> will lead to a slower computation.</p>
+<p>The function returns a list containing the selection probabilities for each covariate, i.e. the proportion of estimated models in which the associated coefficient estimate is different from zero. The user can then set a threshold for selection probability (values ranging from 0.55 to 0.9 are recommended) and obtain the set of selected covariates.</p>
+<div id="case-1-penalty-parameters-specified-by-the-user" class="section level4">
+<h4>Case 1: Penalty parameters specified by the user</h4>
+<p>The following code performs stability selection when all covariates are considered as a single block (a single data source) and a sequence of L1 penalties contains only 2 values.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>stable1 <span class="ot">&lt;-</span> <span class="fu">stable.clr</span>(<span class="at">response =</span> Y,</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">penalized =</span> X, <span class="at">stratum =</span> stratum,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">lambda.seq =</span> <span class="fu">c</span>(<span class="dv">10</span>,<span class="dv">20</span>))</span></code></pre></div>
+<p>The function returns a list with two elements:</p>
+<ol style="list-style-type: decimal">
+<li><p><tt>Pilambda</tt> a numeric vector giving estimates of selection probabilities for each penalized covarite.</p></li>
+<li><p><tt>lambda.seq</tt> a sequence of L1 penalties used.</p></li>
+</ol>
+<p>To inspect the results, we can, for instance, print the covariates with selection probability higher than 0.6:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(stable1<span class="sc">$</span>P<span class="sc">&gt;</span><span class="fl">0.6</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 82 86 87 90</span></span></code></pre></div>
+</div>
+<div id="case-2-penalty-parameters-computed-externally" class="section level4">
+<h4>Case 2: Penalty parameters computed externally</h4>
+<p>It is possible to obtain the sequence of L1 penalty parameters via the function <tt>find.default.lambda</tt>. It relies on the <code>cv.clogitL1</code> function of the <code>clogitL1</code> package to perform cross-validation to determine a suitable <code>lambda</code> sequence. Note that it considers each data source separately and returns a sequence of four values per source (the optimal penalty along with three additional values, see package documentation for details). The number of folds is set to 10 by default but can also be specified by the user.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lambda.seq <span class="ot">&lt;-</span> <span class="fu">find.default.lambda</span>(<span class="at">response =</span> Y, </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">stratum =</span> stratum, </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">penalized =</span> X, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">alpha=</span><span class="dv">1</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                                  <span class="at">nfolds =</span> <span class="dv">10</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>lambda.seq</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  5.300950  6.988013  9.211995 12.143774</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>stable2 <span class="ot">&lt;-</span> <span class="fu">stable.clr</span>(<span class="at">response =</span> Y,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">penalized =</span> X, <span class="at">stratum =</span> stratum,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">lambda.seq =</span> lambda.seq)</span></code></pre></div>
+<p>Covariates with selection probability higher than 0.6:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(stable2<span class="sc">$</span>P<span class="sc">&gt;</span><span class="fl">0.6</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  1 14 58 82 86 87 90 93</span></span></code></pre></div>
+</div>
+<div id="case-3-penalty-parameters-computed-internally" class="section level4">
+<h4>Case 3: Penalty parameters computed internally</h4>
+<p>If we do not specify the penalty parameters as in case 2, <tt>stable.clr</tt> will compute them by default by using <tt>find.default.lambda</tt> with default options. We only need to run:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>stable3 <span class="ot">&lt;-</span> <span class="fu">stable.clr</span>(<span class="at">response =</span> Y,</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">penalized =</span> X, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">stratum =</span> stratum)</span></code></pre></div>
+<p>The selected sequence of <code>lambda</code> is:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>stable3<span class="sc">$</span>lambda.seq</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  6.521593  8.023312  9.870830 12.143774</span></span></code></pre></div>
+<p>Covariates with selection probability higher than 0.6:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(stable3<span class="sc">$</span>P<span class="sc">&gt;</span><span class="fl">0.6</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  1 82 86 87 90 93</span></span></code></pre></div>
+</div>
+<div id="case-4-covariates-divided-into-blocks" class="section level4">
+<h4>Case 4: Covariates divided into blocks</h4>
+<p>This code implements stability selection while taking into account the block structure of covariates (<span class="math inline">\(p\)</span>). To achieve this, we use the function <tt>stable.clr.g</tt> which extends <tt>stable.clr</tt> to allow for blocks (groups) of covariates. In this case, the function takes as an argument <code>lambda.list</code>, a list of sequences of L1 penalties, one for each block. Note that the computation time depends on the length of the block-specific sequences: for each combination of penalties, <span class="math inline">\(2B\)</span> subsamples are taken and used to estimate a penalized conditional logistic regression model.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>lambda.list <span class="ot">&lt;-</span> <span class="fu">find.default.lambda</span>(<span class="at">response =</span> Y,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">penalized =</span> X, <span class="at">stratum =</span> stratum,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">p =</span> p)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>lambda.list</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 10.67917 13.13825 16.16358 19.88555</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  9.211995 12.143774 16.008612 21.103461</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>stable.g1 <span class="ot">&lt;-</span> <span class="fu">stable.clr.g</span>(<span class="at">response =</span> Y,</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">penalized =</span> X,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                          <span class="at">stratum =</span> stratum,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                          <span class="at">p =</span> p,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                          <span class="at">lambda.list =</span> lambda.list)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span>(stable.g1<span class="sc">$</span>P<span class="sc">&gt;</span><span class="fl">0.6</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 82 86 87 90 93</span></span></code></pre></div>
+<p>Note that if <span class="math inline">\(p\)</span> is not specified, the package will automatically run <tt>stable.clr</tt> and apply equal penalties for all covariates.</p>
+</div>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<ol style="list-style-type: decimal">
+<li><p>Boulesteix, A. L., De Bin, R., Jiang, X., &amp; Fuchs, M. (2017). IPF-LASSO: Integrative-penalized regression with penalty factors for prediction based on multi-omics data. Computational and mathematical methods in medicine, 2017.</p></li>
+<li><p>Meinshausen, N., &amp; Bühlmann, P. (2010). Stability selection. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 72(4), 417-473.</p></li>
+<li><p>Shah, R. D., &amp; Samworth, R. J. (2013). Variable selection with error control: another look at stability selection. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 75(1), 55-80.</p></li>
+</ol>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
