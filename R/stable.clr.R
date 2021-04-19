@@ -2,6 +2,7 @@
 #'
 #' Performs stability selection for conditional logistic regression models with L1 and L2 penalty.
 #'
+#'
 #' @inheritParams penalized.clr
 #' @inheritParams subsample.clr
 #' @param lambda.seq a sequence of non-negative values to be used as tuning
@@ -13,6 +14,37 @@
 #'
 #'
 #' @export
+#' #' set.seed(123)
+#'
+#' # simulate covariates (pure noise in two blocks of 20 and 80 variables)
+#' X <- cbind(matrix(rnorm(4000, 0, 1), ncol = 20), matrix(rnorm(16000, 2, 0.6), ncol = 80))
+#'
+#' # stratum membership
+#' stratum <- sort(rep(1:100, 2))
+#'
+#' # the response
+#' Y <- rep(c(1, 0), 100)
+#'
+#' # list of L1 penalties
+#' lambda.list <- find.default.lambda(response = Y,
+#'                                    penalized = X,
+#'                                    stratum = stratum,
+#'                                    lambda.seq = c(2,5))
+#'
+#' # perform stability selection
+#' stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
+#'                          lambda.seq = lambda.seq)
+#'
+#' # when lambda.seq is not provided,
+#' # it is computed within the function (slightly different results might occur due to the
+#' # randomness inherent to cross-validation)
+#'
+#' stable2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)
+#'
+#'
+#'#' @seealso  \code{\link{stable.clr.g}} for stability selection
+#'  in penalized conditional logistic regression with multiple penalties for block structured covariates.
+
 
 stable.clr <- function(response,
                        stratum,
