@@ -220,7 +220,7 @@ This can be particularly useful when performing variable selection on omics vari
 
 #### Case 5: Elastic net penalty
 
-The package <tt>penalizedclr</tt>  is not limited to L1, i.e. lasso, penalty. While L1 penalty is more suited for variable selection, in the presence of highly correlated covariates, it can be useful to add small amount of  L2 penalty.  The two can be  combined in an elastic net framework by specifying  the mixing parameter `alpha`. Default `alpha=1` gives lasso. 
+The package <tt>penalizedclr</tt>  is not limited to L1, i.e. lasso, penalty. While L1 penalty is more suited for variable selection, in the presence of highly correlated covariates, it can be useful to add small amount of  L2 penalty.  The two can be  combined in an elastic net framework by specifying  the mixing parameter `alpha` that can assume values between 0 and 1. Default `alpha=1` gives lasso. 
 
 ```{r  results = 'hide'}
 fit2 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
@@ -231,7 +231,7 @@ fit2 <- penalized.clr(response = Y, penalized = X, stratum = stratum,
 
 ### Penalized conditional logistic regression: stability selection
 
-The function <tt>stable.clr</tt> performs stability selection (Meinshausen and Bühlmann 2010 and  Shah and  Samworth 2013) for variable selection in penalized conditional logistic regression. For details on stability selection, we refer to the original publications. Briefly, a set of $L1$ penalties is considered, and for each considered value of the of the penalty, $2B$ random subsamples of  $\lfloor K/2 \rfloor$ matched pairs are taken and a penalized model is estimated. For each covariate and penalty value, selection probability is estimated as the proportion of estimated models in which the associated coefficient estimate is different from zero. Finally, the overall selection probability of a variable is obtained by taking the maximum selection probability over all considered penalty values. 
+The function <tt>stable.clr</tt> performs stability selection (Meinshausen and Bühlmann 2010 and  Shah and  Samworth 2013) for variable selection in penalized conditional logistic regression. For details on stability selection, we refer to the original publications. Briefly, a set of L1 penalties is considered, and for each considered value  of the penalty, $2B$ random subsamples of  $\lfloor K/2 \rfloor$ matched pairs are taken and a penalized model is estimated. For each covariate and penalty value, selection probability is estimated as the proportion of estimated models in which the associated coefficient estimate is different from zero. Finally, the overall selection probability of a variable is obtained by taking the maximum selection probability over all considered penalty values. 
 
 Parameter $B$ is set to 100 by default, but can be changed by the user. Note that this choice will have an impact on the computation time, and higher values of $B$ will lead to a slower computation.  
 
