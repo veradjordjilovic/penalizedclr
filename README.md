@@ -28,23 +28,10 @@ Load the package with:
 library(penalizedclr)
 ```
 
-## The setting
-Assume that we have $K$ independent matched case-control pairs $(Y_{ki}, X_{ki})$, where $Y_{ki}$, $k=1,\ldots,K;$ $i=1,2,$ is a binary variable indicating case control status (1 if case, 0 if control) and $X_{ki}$ is the associated $p$-dimensional vector of covariates. The conditional logistic regression models the probability of being a case given that the observation belongs to the $k$-th pair as:
-$$
-{\mathrm {logit}}\left[P(Y_{ki}=1 \mid S=k)\right] = \beta_{0k} + \beta^{T}X_{ki}, \quad k\in\left\{1,\ldots, K\right\}, i\in\left\{1,2\right\}
-$$
-where $S$ is the matched pair id,  $\beta_{0k}$ is the pair specific intercept and $\beta=(\beta_1, \ldots,\beta_p)^T$ is a $p$-dimensional vector of fixed effects. 
-
-In the present package we: 
-
-* estimate $\beta$ in the high dimensional setting in which the number of covariates $p$ is much higher than the number of pairs $K$. We consider a penalized conditional logistic regression, which adds a penalty to the conditional log likelihood. Motivated by current medical applications considering clinical and molecular data,  we allow $X_{ki}$ to be a merge of heteregenous data sources;
-
-* perform stability selection to identify important variables, that is,  variables for which $\beta_j\neq 0$, $j\in\left\{1,\ldots,p\right\}$.
-
 
 
 ## Examples
-In this section we provide examples of how to fit a penalized conditional regression model with source-specific penalty parameters and how to perform variable selection with <tt>penalizedclr</tt>. 
+Some examples of how to fit a penalized conditional regression model with source-specific penalty parameters and how to perform variable selection with <tt>penalizedclr</tt>. 
 
 Initial settings and libraries to be loaded:
 
