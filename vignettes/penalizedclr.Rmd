@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-The R package <tt>penalizedclr</tt> provides an implementation of the penalized logistic regression model for matched case-control studies. The implementation allows for different penalties for different blocks of covariates, and  is therefore particularly useful in the presence of multi-source omics data. Both L1 and L2 penalties are implemented. 
+The R package <tt>penalizedclr</tt> provides an implementation of the penalized logistic regression model that can be used in the analysis of matched case-control studies. The implementation allows to apply different penalties to different blocks of covariates, and  is therefore particularly useful in the presence of multi-source heterogenous data, such as multiple layers of omics measurements. Both L1 and L2 penalties are implemented. 
 Additionally, the package implements stability selection to allow for  variable selection in the considered regression model. 
 
 
@@ -317,7 +317,7 @@ which(stable3$P>0.6)
 
 #### Case 4: Covariates divided into blocks
 
-This code implements stability selection for variable selection via penalized conditional logistic regression taking into account the block structure of covariates ($p$). We compute  data-source specific sequences `lambda.seq` externally via <tt>find.default.lambda</tt> and then run <tt>stable.clr.g</tt>. This function is an extension of <tt>stable.clr</tt> that allows for different groups (blocks) of covariates.
+This code implements stability selection while taking into account the block structure of covariates ($p$). To achieve this, we use the function <tt>stable.clr.g</tt> which extends <tt>stable.clr</tt> to allow for blocks (groups) of covariates. In this case, the function takes as an argument `lambda.list`,  a list of  sequences of L1 penalties, one for each block.  Note that the computation time depends on the length of the block-specific sequences: for each combination of penalties, $2B$ subsamples are taken and used to estimate a penalized conditional logistic regression model. 
 
 ```{r}
 
