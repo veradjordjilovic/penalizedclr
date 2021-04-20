@@ -110,5 +110,5 @@ another look at stability selection. Journal of the Royal Statistical Society: S
 }
 }
 \seealso{
-\code{\link{find.default.lambda}} for obtaining defualt sequences of L1 penalties.
+\code{\link{find.default.lambda}} for obtaining default sequences of L1 penalties.
 }

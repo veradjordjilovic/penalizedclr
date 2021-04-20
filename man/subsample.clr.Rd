@@ -35,7 +35,7 @@ alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never 
 
 \item{B}{A single positive number for the number of subsamples.}
 
-\item{matB}{A \eqn{2B \times\ceiling{unique(stratum)/2}} matrix with index set of selected strata in each of \eqn{2\times B} subsamples}
+\item{matB}{A 2B x ceiling(unique(stratum)/2) matrix with index set of selected strata in each of 2B subsamples}
 
 \item{return.matB}{Logical. Should the matrix matB be returned?}
 

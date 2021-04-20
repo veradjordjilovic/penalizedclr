@@ -4,7 +4,7 @@
 #'
 #' @inheritParams penalized.clr
 #' @param B A single positive number for the number of subsamples.
-#' @param matB  A \eqn{2B \times\ceiling{unique(stratum)/2}} matrix with index set of selected strata in each of \eqn{2\times B} subsamples
+#' @param matB  A 2B x ceiling(unique(stratum)/2) matrix with index set of selected strata in each of 2B subsamples
 #' @param return.matB Logical. Should the matrix matB be returned?
 #' @param parallel Logical. Should the computation be parallelized?
 #'

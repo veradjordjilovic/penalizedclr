@@ -1,5 +1,5 @@
 Package: penalizedclr
-Title: Integrative Penalized Conditional Logistic Regression With Penalty Factors
+Title: Integrative Penalized Conditional Logistic Regression with Penalty Factors
 Version: 0.0.0.9000
 Authors@R: c(
     person(given = "Vera",
@@ -16,7 +16,6 @@ Description: Implements L1 and L2 penalized conditional logistic regression with
     stability selection for variable selection. 
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports:

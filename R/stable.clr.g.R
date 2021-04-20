@@ -18,7 +18,7 @@
 #'         `lambda.list`.
 #'
 #'@seealso
-#'    \code{\link{find.default.lambda}} for obtaining defualt sequences of L1 penalties.
+#'    \code{\link{find.default.lambda}} for obtaining default sequences of L1 penalties.
 #'
 #'
 #' @references  1. Meinshausen, N., & Bühlmann, P. (2010). Stability selection.
