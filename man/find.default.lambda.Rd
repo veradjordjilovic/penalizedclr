@@ -74,12 +74,12 @@ stratum <- sort(rep(1:100, 2))
 Y <- rep(c(1, 0), 100)
 
 # obtain a list with a separate sequence for each block
-\dontrun{
+\donttest{
 lambda.list <- find.default.lambda(response = Y,
                                    penalized = X, stratum = stratum, p = p)}
 
 # obtain a single sequence
-\dontrun{
+\donttest{
 lambda.seq <- find.default.lambda(response = Y,
                                    penalized = X, stratum = stratum)}
 }

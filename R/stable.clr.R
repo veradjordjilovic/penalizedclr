@@ -33,7 +33,7 @@
 #'                                    stratum = stratum)
 #'
 #' # perform stability selection
-#' \dontrun{
+#' \donttest{
 #' stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
 #'                          lambda.seq = lambda.seq)}
 #'
@@ -41,7 +41,7 @@
 #' # it is computed within the function (slightly different results might occur due to the
 #' # randomness inherent to cross-validation)
 #'
-#'\dontrun{
+#'\donttest{
 #' stable2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)}
 #'
 #'
