@@ -10,8 +10,8 @@
 #' @inheritParams penalized.clr
 #' @inheritParams subsample.clr
 #' @inheritParams stable.clr
-#' @param lambda.list A list with per-block sequences of L1 penalties.
-#'                    If NULL, `find.default.lambda` function is called.
+#' @param lambda.list A list with  sequences of L1 penalties.
+#'
 #'
 #' @return A list containing a numeric vector \code{Pilambda},
 #'         giving selection probabilities for all penalized covariates and
@@ -76,7 +76,7 @@ stable.clr.g <- function(response,
                          penalized,
                          unpenalized = NULL,
                          p = NULL,
-                         lambda.list = NULL,
+                         lambda.list,
                          alpha = 1,
                          B = 100,
                          parallel = TRUE,
@@ -91,49 +91,37 @@ stable.clr.g <- function(response,
   if (missing(p)| is.null(p) | length(p) == 1){
     warning("valid p is not provided:
             all covariates are penalized equally.")
-    if (is.null(lambda.list)) {
 
-    temp <- stable.clr(response, stratum, penalized,
-                       unpenalized, lambda.seq = NULL,
-                       alpha, B, parallel, standardize, event)}else{
     temp <- stable.clr(response, stratum, penalized,
                                             unpenalized, lambda.seq = unlist(lambda.list),
                                             alpha, B, parallel, standardize, event)
-                       }
+
     Pistab <- temp$Pistab
     lambda.list <- temp$lambda.seq
+    p <- ncol(penalized)
     }else{
 
-  g <- length(p) # the number of groups
+    g <- length(p) # the number of groups
 
-  ind.pair <- unique(stratum)
-  b <- length(ind.pair)
-  subsample.size <- ceiling(b / 2)
+    ind.pair <- unique(stratum)
+    b <- length(ind.pair)
+    subsample.size <- ceiling(b / 2)
 
-  matB <- matrix(0, nrow = 2 * B, ncol = subsample.size)
-  for (i in 1:B) {
-    matB[i, ] <- sample(ind.pair,
+    matB <- matrix(0, nrow = 2 * B, ncol = subsample.size)
+    for (i in 1:B) {
+      matB[i, ] <- sample(ind.pair,
       size = subsample.size,
-      replace = FALSE
-    )
-    matB[B + i, 1:(b - subsample.size)] <- setdiff(ind.pair, matB[i, ])
-  }
+      replace = FALSE)
+      matB[B + i, 1:(b - subsample.size)] <- setdiff(ind.pair, matB[i, ])
+    }
 
-  if (is.null(lambda.list) | missing(lambda.list)) {
-    lambda.list <- find.default.lambda(response,
-                                       stratum,
-                                       penalized,
-                                       unpenalized,
-                                       alpha,
-                                       p,
-                                       standardize)
-  }
+
   if (parallel) {
     cl <- parallel::makeCluster(getOption("cl.cores", 2), setup_timeout = 0.5)
     parallel::clusterExport(cl, varlist = c("penalized.clr"))
 
-    subslist <- c(list(B = 1:(2 * B)), lambda.list)
-    P <- expand.grid(subslist)
+    temp <- lapply(lambda.list, function(x) cbind(B = 1:(2*B), matrix(rep(x, 2*B), ncol = length(x), byrow = T)))
+    P <- do.call(rbind, temp)
 
     res <- t(parallel::parApply(cl,
       P,
@@ -166,6 +154,9 @@ stable.clr.g <- function(response,
     res <- t(res2[, -c(1:g)])
     parallel::stopCluster(cl)
   } else {
+    temp <- lapply(lambda.list, function(x) cbind(B = 1:(2*B), matrix(rep(x, 2*B), ncol = length(x), byrow = T)))
+    P <- do.call(rbind, temp)
+    res <- matrix(0, nrow = nrow(P), ncol = ncol(penalized))
     for (i in 1:nrow(P)) {
       ind <- stratum %in% matB[P[i, 1], ]
       fit <- penalized.clr(response[ind],
@@ -174,14 +165,19 @@ stable.clr.g <- function(response,
         unpenalized = unpenalized[ind, ],
         lambda = as.numeric(P[i, -1]),
         alpha = alpha,
-        standardize = standardize )
-      selB[i, ] <- (fit$penalized != 0) * 1
-      colnames(selB) <- names(fit$penalized)
+        p = p,
+        standardize = standardize)
+      res[i, ] <- (fit$penalized != 0) * 1
+      colnames(res) <- names(fit$penalized)
     }
+    res1 <- as.data.frame(cbind(P, res))
+    res2 <- stats::aggregate(res, by = as.list(res1[, 2:(g + 1)]), mean)
+    res <- t(res2[, -c(1:g)])
   }
 
   Pistab <- apply(res, 1, max)
   names(Pistab) <- colnames(penalized)}
-
-  return(list(Pistab = Pistab, lambda.list = lambda.list))
+  res <- list(Pistab = Pistab, lambda.list = lambda.list, p = p)
+  class(res) <- c("list", "penclr")
+  return(res)
 }
