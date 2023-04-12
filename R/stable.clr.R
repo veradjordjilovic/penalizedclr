@@ -53,7 +53,7 @@ stable.clr <- function(response,
                        stratum,
                        penalized,
                        unpenalized = NULL,
-                       lambda.seq = NULL,
+                       lambda.seq,
                        alpha = 1,
                        B = 100,
                        parallel = TRUE,
@@ -67,16 +67,6 @@ stable.clr <- function(response,
     unpenalized <- as.matrix(unpenalized, nrow = nrow(penalized))
   }
 
-  if (is.null(lambda.seq)){
-    lambda.seq <- find.default.lambda(response,
-                                      stratum,
-                                      penalized,
-                                      unpenalized,
-                                      alpha,
-                                      p = NULL,
-                                      standardize,
-                                      event)
-  }
 
   fit <- subsample.clr(
     response = response,
@@ -156,5 +146,7 @@ stable.clr <- function(response,
 
   Pistab <- apply(res, 1, max)
   names(Pistab) <- names(fit$Pilambda)
-  return(list(Pistab = Pistab, lambda.seq = lambda.seq))
+  res <- list(Pistab = Pistab, lambda.seq = lambda.seq)
+  class(res) <- c("list", "penclr")
+  return(res)
 }
