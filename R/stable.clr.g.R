@@ -50,25 +50,16 @@
 #' Y <- rep(c(1, 0), 100)
 #'
 #' # list of L1 penalties
-#' lambda.list <- find.default.lambda(response = Y,
-#'                                    penalized = X, stratum = stratum, p = p)
+#'
+#' lambda.list = list(c(0.5,1), c(2,0.9))
 #'
 #' # perform stability selection
 #' \donttest{
 #' stable.g1 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
 #'                          p = p, lambda.list = lambda.list)}
 #'
-#' # when lambda.list is not provided,
-#' # it is computed within the function (slightly different results might occur due to the
-#' # randomness inherent to cross-validation)
-#'\donttest{
-#' stable.g2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
-#'                           p = p)}
 #'
-#' # if p is not provided, all covariates are penalized equally
-#' \donttest{
-#' stable.g3 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)}
-#'
+
 
 
 stable.clr.g <- function(response,
@@ -80,7 +71,7 @@ stable.clr.g <- function(response,
                          alpha = 1,
                          B = 100,
                          parallel = TRUE,
-                         standardize = FALSE,
+                         standardize = TRUE,
                          event) {
   if (missing(event) && is.factor(response)) event <- levels(response)[1]
   if (is.factor(response)) response <- (response == event) * 1

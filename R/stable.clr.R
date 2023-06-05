@@ -6,8 +6,8 @@
 #'
 #' @inheritParams penalized.clr
 #' @inheritParams subsample.clr
-#' @param lambda.seq a sequence of non-negative values to be used as tuning
-#'    parameters for L1
+#' @param lambda.seq  a sequence of non-negative value to be used as tuning
+#'    parameter for L1
 #'
 #' @return A list with a  numeric vector \code{Pilambda}
 #'         giving selection probabilities for each penalized covariate, and
@@ -37,12 +37,6 @@
 #' stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
 #'                          lambda.seq = lambda.seq)}
 #'
-#' # when lambda.seq is not provided,
-#' # it is computed within the function (slightly different results might occur due to the
-#' # randomness inherent to cross-validation)
-#'
-#'\donttest{
-#' stable2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)}
 #'
 #'
 #' @seealso  \code{\link{stable.clr.g}} for stability selection
@@ -57,7 +51,7 @@ stable.clr <- function(response,
                        alpha = 1,
                        B = 100,
                        parallel = TRUE,
-                       standardize = FALSE,
+                       standardize = TRUE,
                        event) {
   if (missing(event) && is.factor(response)) event <- levels(response)[1]
 
@@ -81,6 +75,8 @@ stable.clr <- function(response,
     parallel = parallel,
     standardize = standardize
   )
+
+  if (length(lambda.seq == 1)) {Pistab = fit$Pilambda}else{
   matB <- fit$matB
   if (parallel) {
     cl <- parallel::makeCluster(getOption("cl.cores", 2), setup_timeout = 0.5)
@@ -145,7 +141,7 @@ stable.clr <- function(response,
   }
 
   Pistab <- apply(res, 1, max)
-  names(Pistab) <- names(fit$Pilambda)
+  names(Pistab) <- names(fit$Pilambda)}
   res <- list(Pistab = Pistab, lambda.seq = lambda.seq)
   class(res) <- c("list", "penclr")
   return(res)

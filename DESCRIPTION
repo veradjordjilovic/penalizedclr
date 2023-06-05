@@ -1,6 +1,6 @@
 Package: penalizedclr
 Title: Integrative Penalized Conditional Logistic Regression 
-Version: 0.1.0
+Version: 2.0.0
 Authors@R: c(
     person(given = "Vera",
            family = "Djordjilovi\'c",
@@ -17,13 +17,13 @@ Description: Implements L1 and L2 penalized conditional logistic regression with
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Imports:
 	      penalized,
 	      survival,
 	      clogitL1,
-	      stats, 
-	      tidyverse	      
+	      stats,
+	      tidyverse
 Suggests:
     parallel,
     knitr,

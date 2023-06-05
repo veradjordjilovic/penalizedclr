@@ -26,7 +26,7 @@ subsample.clr <- function(response,
                           matB = NULL,
                           return.matB = FALSE,
                           parallel = TRUE,
-                          standardize = FALSE) {
+                          standardize = TRUE) {
   ind.pair <- unique(stratum)
   b <- length(ind.pair)
   subsample.size <- ceiling(b / 2)
