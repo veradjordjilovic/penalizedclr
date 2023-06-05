@@ -2,7 +2,7 @@
 % Please edit documentation in R/default.pf1.R
 \name{default.pf}
 \alias{default.pf}
-\title{Data adaptive candidate vector of penalty factors for L1 penalty in conditional logistic regression}
+\title{Data adaptive candidate vector of penalty factors for L1 penalty in conditional logistic regression with covariates divided in blocks}
 \usage{
 default.pf(
   X,
@@ -38,10 +38,21 @@ and with the sum equal to the number of penalized covariates.
 If missing, all covariates are treated the same and a single penalty is applied.}
 }
 \value{
-A numeric vector of length 1 to 3 (depending on the problem)
-giving L1 penalties
+The function returns a list containing the  vector of penalty factors correspondng to different blocks.
 }
 \description{
-Performs cross validation to determine reasonable default values for L1 penalty
-in a conditional logistic regression
+Computes a data adaptive vector of penalty factors for  blocks of covariates by fitting
+a tentative penalized conditional logistic regression model. The penalty for the \code{i}th block is obtained
+as the inverse of the arithmetic mean of coefficient estimates for its covariates.
+}
+\details{
+Blocks that contain covariates with large estimated coefficients will be penalized less in the second step.
+If all estimated coefficients pertaining to a block are zero, the functions returns a message.
+A tentative conditional logistic regression model is fit either to each covariates block separately (\code{type.step1 = "sep"}) or  jointly to all blocks (\code{type.step1 = "comb"}).
+}
+\references{
+Schulze G. (2017) Clinical Outcome Prediction based on Multi-Omics Data: Extension of IPF-LASSO. Master Thesis.
+}
+\seealso{
+\link{find.default.lambda}
 }

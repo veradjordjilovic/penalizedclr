@@ -69,7 +69,7 @@ penalized.clr <- function(response,
                           lambda,
                           alpha = 1,
                           p = NULL,
-                          standardize = FALSE,
+                          standardize = TRUE,
                           event) {
 
   if (missing(event) && is.factor(response)) event <- levels(response)[1]

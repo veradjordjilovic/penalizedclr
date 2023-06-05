@@ -1,7 +1,8 @@
-#' Data adaptive candidate vector of penalty factors for L1 penalty in conditional logistic regression
+#' Data adaptive candidate vector of penalty factors for L1 penalty in conditional logistic regression with covariates divided in blocks
 #'
-#' Performs cross validation to determine reasonable default values for L1 penalty
-#' in a conditional logistic regression
+#' Computes a data adaptive vector of penalty factors for  blocks of covariates by fitting
+#' a tentative penalized conditional logistic regression model. The penalty for the `i`th block is obtained
+#' as the inverse of the arithmetic mean of coefficient estimates for its covariates.
 #'
 #'
 #' @inheritParams penalized.clr
@@ -10,10 +11,16 @@
 #' @param Y A binary response variable.
 #' @param nfolds The number of folds used in cross-validation. Default is 10.
 #' @param type.step1 Should the tentative model be fit on all covariates jointly or to each block separately.
-#' @return A numeric vector of length 1 to 3 (depending on the problem)
-#' giving L1 penalties
+#' @return The function returns a list containing the  vector of penalty factors correspondng to different blocks.
 #'
+#' @references  Schulze G. (2017) Clinical Outcome Prediction based on Multi-Omics Data: Extension of IPF-LASSO. Master Thesis.
 #'
+#' @export
+#' @details Blocks that contain covariates with large estimated coefficients will be penalized less in the second step.
+#' If all estimated coefficients pertaining to a block are zero, the functions returns a message.
+#' A tentative conditional logistic regression model is fit either to each covariates block separately (`type.step1 = "sep"`) or  jointly to all blocks (`type.step1 = "comb"`).
+#' @seealso [find.default.lambda]
+
 
 
 
@@ -32,8 +39,10 @@ default.pf <- function(X, Y, stratum, nfolds = 10, alpha = 1, standardize = TRUE
     stop("type.step1 should be sep or comb")
   }
 
-  if (standardize) X <- apply(X, 2, function(x)
-    x/sqrt((length(x)-1)/length(x)*var(x)))
+ # if (standardize) X <- apply(X, 2, function(x)
+ #   x/sqrt((length(x)-1)/length(x)*var(x)))
+
+  if (standardize) X <- scale(X)
 
   blocks <- rep(1:length(p),  p)
 
@@ -61,8 +70,10 @@ default.pf <- function(X, Y, stratum, nfolds = 10, alpha = 1, standardize = TRUE
     exc <- which(means==0)
     pf <- 1/means[means!=0]
   }
-  if (is.null(exc)){return(list("The data adaptive vector of penalty factors is ", pf = pf))}else{
-    return(list("The data adaptive vector of penalty factors is ", pf = pf, "and the following modality(ies) have been excluded ", exc = exc))
+  if (is.null(exc)){print("The data adaptive vector of penalty factors is ")
+    return(list(pf = pf))}else{
+   print("The data adaptive vector of penalty factors and the  modality(ies) that have been excluded are ")
+    return(list(pf = pf, exc = exc))
   }
 
 }

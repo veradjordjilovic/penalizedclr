@@ -10,11 +10,11 @@ stable.clr.g(
   penalized,
   unpenalized = NULL,
   p = NULL,
-  lambda.list = NULL,
+  lambda.list,
   alpha = 1,
   B = 100,
   parallel = TRUE,
-  standardize = FALSE,
+  standardize = TRUE,
   event
 )
 }
@@ -32,8 +32,7 @@ a numerical vector of the length equal to the number of blocks,
 and with the sum equal to the number of penalized covariates.
 If missing, all covariates are treated the same and a single penalty is applied.}
 
-\item{lambda.list}{A list with per-block sequences of L1 penalties.
-If NULL, \code{find.default.lambda} function is called.}
+\item{lambda.list}{A list with  sequences of L1 penalties.}
 
 \item{alpha}{The elastic net mixing parameter, a number between 0 and 1.
 alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never obtained in this implementation since alpha must be positive.}
@@ -81,24 +80,14 @@ stratum <- sort(rep(1:100, 2))
 Y <- rep(c(1, 0), 100)
 
 # list of L1 penalties
-lambda.list <- find.default.lambda(response = Y,
-                                   penalized = X, stratum = stratum, p = p)
+
+lambda.list = list(c(0.5,1), c(2,0.9))
 
 # perform stability selection
 \donttest{
 stable.g1 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
                          p = p, lambda.list = lambda.list)}
 
-# when lambda.list is not provided,
-# it is computed within the function (slightly different results might occur due to the
-# randomness inherent to cross-validation)
-\donttest{
-stable.g2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum,
-                          p = p)}
-
-# if p is not provided, all covariates are penalized equally
-\donttest{
-stable.g3 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)}
 
 }
 \references{

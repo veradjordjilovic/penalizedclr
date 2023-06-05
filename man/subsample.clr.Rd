@@ -15,7 +15,7 @@ subsample.clr(
   matB = NULL,
   return.matB = FALSE,
   parallel = TRUE,
-  standardize = FALSE
+  standardize = TRUE
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ subsample.clr(
 \item{unpenalized}{A matrix of additional unpenalized covariates.}
 
 \item{lambda}{The tuning parameter for L1. Either a single non-negative number,
-or a numeric vector of the length equal to the number of blocks. If NULL, function \code{find.default.lambda} is called.  See p below.}
+or a numeric vector of the length equal to the number of blocks. See p below.}
 
 \item{alpha}{The elastic net mixing parameter, a number between 0 and 1.
 alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never obtained in this implementation since alpha must be positive.}
