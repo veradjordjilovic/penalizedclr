@@ -23,6 +23,6 @@ alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never 
 A numeric value for \code{lambda} minimizing cross validated deviance.
 }
 \description{
-Performs cross validation to determine reasonable default values for L1 penalty
+Internal function that performs cross validation to determine reasonable default values for L1 penalty
 in a conditional logistic regression
 }

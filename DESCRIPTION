@@ -22,10 +22,10 @@ Imports:
 	      penalized,
 	      survival,
 	      clogitL1,
-	      stats,
-	      tidyverse
+	      stats
 Suggests:
     parallel,
     knitr,
-    rmarkdown
+    rmarkdown,
+    tidyverse
 VignetteBuilder: knitr

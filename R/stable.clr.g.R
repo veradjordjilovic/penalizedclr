@@ -10,15 +10,13 @@
 #' @inheritParams penalized.clr
 #' @inheritParams subsample.clr
 #' @inheritParams stable.clr
-#' @param lambda.list A list with  sequences of L1 penalties.
+#' @param lambda.list A list of vectors of penalties to be applied to different blocks of
+#' covariates. Each vector should have the length equal to the number of blocks.
 #'
 #'
-#' @return A list containing a numeric vector \code{Pilambda},
-#'         giving selection probabilities for all penalized covariates and
-#'         `lambda.list`.
-#'
-#'@seealso
-#'    \code{\link{find.default.lambda}} for obtaining default sequences of L1 penalties.
+#' @return A list containing a numeric vector \code{Pistab},
+#'         giving selection probabilities for all penalized covariates,
+#'         `lambda.list` and `p` provided as input arguments.
 #'
 #'
 #' @references  1. Meinshausen, N., & Bühlmann, P. (2010). Stability selection.
@@ -31,10 +29,10 @@
 #' a conditional logistic regression. The implementation is based on the modification of Shah and
 #' Samworth (2013) featuring complementary subsamples. Note that this means that the number
 #' of subsamples will be `2B` instead of `B`. Subsampling procedure is repeated
-#' `2B` times for each combination of per-block penalties resulting each time in a vector of
-#' selection frequences (frequency of non-zero coefficient estimate of each covariate).
-#' The final selection probability `Pilambda` is obtained by taking the maximum over
-#' all considered values of penalties.
+#' `2B` times for each vector of per-block penalties resulting each time in a vector of
+#' selection frequencies (frequency of non-zero coefficient estimate of each covariate).
+#' The final selection probability `Pistab` is obtained by taking the maximum over
+#' all considered vectors of penalties.
 #'
 #'@examples
 #' set.seed(123)

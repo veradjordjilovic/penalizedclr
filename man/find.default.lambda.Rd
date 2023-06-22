@@ -44,7 +44,7 @@ should be considered a success in the logistic regression.}
 \item{nfolds}{The number of folds used in cross-validation. Default is 10.}
 }
 \value{
-A single numeric value if \code{p} and \code{pf.list} is missing, or a list of numeric values
+A single numeric value if \code{p} and \code{pf.list} are missing, or a list of numeric values
 with L1 penalties for each vector of penalty factors supplied.
 }
 \description{
@@ -53,7 +53,7 @@ in a conditional logistic regression.
 }
 \details{
 The function is based on cross-validation implemented in the \code{clogitL1} package and returns
-the value of \code{lambda} that minizmes cross validated deviance.
+the value of \code{lambda} that minimizes cross validated deviance.
 In the presence of blocks of covariates, a user specifies a list of
 candidate vectors of penalty factors. For each candidate vector of penalty factors a
 single \code{lambda} value is obtained.  Note that
@@ -79,7 +79,7 @@ lambda.list <- find.default.lambda(response = Y,
 
 # when `p` and `pf.list` are not provided all covariates are treated as a single block
 \donttest{
-lambda.seq <- find.default.lambda(response = Y,
+lambda <- find.default.lambda(response = Y,
                                    penalized = X, stratum = stratum)}
 }
 \seealso{

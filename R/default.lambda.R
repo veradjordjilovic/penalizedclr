@@ -1,6 +1,6 @@
 #' Default values for L1 penalty in conditional logistic regression
 #'
-#' Performs cross validation to determine reasonable default values for L1 penalty
+#' Internal function that performs cross validation to determine reasonable default values for L1 penalty
 #' in a conditional logistic regression
 #'
 #'

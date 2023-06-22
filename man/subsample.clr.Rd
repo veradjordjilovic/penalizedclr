@@ -44,10 +44,10 @@ alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never 
 \item{standardize}{Should the covariates be standardized, a logical value.}
 }
 \value{
-If \code{return.matB} is TRUE, a list with two elements, a numeric vector Pilambda,
+If \code{return.matB} is TRUE, a list with two elements, a numeric vector \code{Pistab},
 giving selection probabilities for each covariate and a matrix \code{matB};
-otheriwise only Pilambda.
+otheriwise only \code{Pistab}.
 }
 \description{
-Stability selection for penalized conditional logistic regression
+Internal function used by \code{stable.clr} and \code{stable.clr.g}.
 }

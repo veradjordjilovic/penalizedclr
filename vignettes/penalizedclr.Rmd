@@ -58,17 +58,17 @@ In this section we provide examples of how to fit a penalized conditional regres
 Initial settings and libraries to be loaded:
 
 ```{r message=FALSE, warning=FALSE}
-set.seed(123)
-require(tidyverse)
+set.seed(1234)
+library(tidyverse)
 ```
 
 ### Data generation
 
-We generate a simple multi-source data set, with two groups of covariates containing 80 and 20 variables, respectively. As specified above, each case is matched to a control, and the probability of being a case in each stratum (case-control pair) is obtained from the linear predictor. An intercept is generated independently for each stratum.
+We generate a simple multi-source data set, with two groups of covariates containing 12 and 40 variables, respectively. As specified above, each case is matched to a control, and the probability of being a case in each stratum (case-control pair) is obtained from the linear predictor. An intercept is generated independently for each stratum.
 
 ```{r}
 # two groups of predictors
-p <- c(8, 40)
+p <- c(12, 40)
 
 # percentage and number of non-null variables
 p_nz <- c(0.5, 0.2)
@@ -77,7 +77,8 @@ m_nz <- round(p*p_nz, 0)
 # number of different strata (case-control pairs)
 K <- 100
 
-# number of cases and controls in each stratum (not necessarily 1:1 matching, other designs are also allowed)
+# number of cases and controls in each stratum (not necessarily 1:1 matching,
+# other designs are also allowed)
 n_cases <- 1
 n_ctrl <- 1
 
@@ -87,20 +88,19 @@ X = cbind(matrix(rnorm(p[1] * K * (n_cases + n_ctrl), 0, 1), ncol = p[1]),
           matrix(rnorm(p[2] * K * (n_cases + n_ctrl), 0, 4), ncol = p[2]))
 
 # coefficients
-beta <- as.matrix(c(rnorm(m_nz[1], 2, 1),
+beta <- as.matrix(c(rnorm(m_nz[1], 4, 1),
                     rep(0, p[1] - m_nz[1]),
                     rnorm(m_nz[2], 2, 0.8),
                     rep(0, p[2] - m_nz[2])), ncol = 1)
 
 
 
-beta_stratum <- rep(rnorm(K, 0, 2), each= n_cases+n_ctrl)
 
 # stratum membership
 stratum <- rep(1:K, each= n_cases+n_ctrl)
 
 # linear predictor
-lin_pred <- beta_stratum + X %*% beta
+lin_pred <-  X %*% beta
 
 prob_case <- exp(lin_pred) / (1 + exp(lin_pred))
 
@@ -124,10 +124,11 @@ Y[data_sim_cases$obs_id] <- 1
 The function <tt>penalized.clr</tt> fits a penalized conditional logistic regression model with different penalties for different blocks of covariates. The L1 penalty parameter `lambda` (a numeric vector of the length equal to the number of blocks) is specified by the user.
 
 
-This code illustrates how to fit <tt>penalized.clr</tt> with penalty parameters specified by the user. Here <tt>Y</tt> is the response vector, <tt>X</tt> is the multi-source matrix of covariates, <tt>stratum</tt> is the vector of ids of the matching pairs, and <tt>p</tt> is the vector of block dimensions. It has the same dimension as the vector of penalty parameters <tt>lambda</tt>. Penalty parameters are thus specified for each data source, i.e., a block of covariates. It is possible to standardize the variables by setting <tt>standardize = TRUE</tt> (<tt>FALSE</tt> by default).
+This code illustrates how to fit <tt>penalized.clr</tt> with penalty parameters specified by the user. Here <tt>Y</tt> is the response vector, <tt>X</tt> is the multi-source matrix of covariates, <tt>stratum</tt> is the vector of ids of the matching pairs, and <tt>p</tt> is the vector of block dimensions. It has the same dimension as the vector of penalty parameters <tt>lambda</tt>. Penalty parameters are thus specified for each data source, i.e., a block of covariates. It is possible to standardize the variables by setting <tt>standardize = TRUE</tt> (<tt>TRUE</tt> by default).
 
 ```{r results = 'hide'}
-fit1 <- penalized.clr(response = Y, penalized = X, stratum = stratum, lambda = c(1,4), p = p, standardize = TRUE)
+fit1 <- penalized.clr(response = Y, penalized = X, stratum = stratum, 
+                      lambda = c(1,4), p = p, standardize = TRUE)
 ```
 
 The function returns a list with elements:
@@ -144,7 +145,7 @@ The function returns a list with elements:
 
 6.  <tt>Y</tt> - The response vector saved as a survival object used internally.
 
-For instance, `fit1$penalized` is a numeric vector containing the regression coefficients for the penalized covariates. We can compare estimated coefficients with the true coefficients (the ones that generated our data), by constructing a `2 x 2` contingency table cross-tabulating true non-zero and estimated non-zero coefficients:
+For instance, `fit1$penalized` is a numeric vector containing the regression coefficients for the penalized covariates. In this simple example, we can compare estimated coefficients with the true coefficients (the ones that generated our data), by constructing a `2 x 2` contingency table cross-tabulating true non-zero and estimated non-zero coefficients:
 
 ```{r}
 str(fit1)
@@ -157,7 +158,8 @@ table(fitted = (fit1$penalized != 0) * 1, nonzero_index)
 The package <tt>penalizedclr</tt> is not limited to L1, i.e. lasso, penalty. While L1 penalty is more suited for variable selection, in the presence of highly correlated covariates, it can be useful to add small amount of L2 penalty. The two can be combined in an elastic net framework by specifying the mixing parameter `alpha` that can assume values between 0 and 1. Default `alpha=1` gives lasso.
 
 ```{r  results = 'hide'}
-fit2 <- penalized.clr(response = Y, penalized = X, stratum = stratum, lambda = c(1,4),p = p, standardize = TRUE, alpha = 0.6)
+fit2 <- penalized.clr(response = Y, penalized = X, stratum = stratum, 
+                      lambda = c(1,4),p = p, standardize = TRUE, alpha = 0.6)
 ```
 
 ### Penalized conditional logistic regression: stability selection
@@ -170,7 +172,7 @@ The function returns a list containing the selection probabilities for each cova
 
 #### Case 1: Penalty parameters specified by the user
 
-The following code performs stability selection when all covariates are considered as a single block (a single data source) and a sequence of L1 penalties contains only 3 values.
+The following code performs stability selection when all covariates are considered as a single block (a single data source) and a sequence of L1 penalties contains 3 values.
 
 ```{r}
 stable1 <- stable.clr(response = Y, B = 50,
@@ -180,27 +182,33 @@ stable1 <- stable.clr(response = Y, B = 50,
 
 The function returns a list with two elements:
 
-1.  <tt>Pilambda</tt> a numeric vector giving estimates of selection probabilities for each penalized covariate.
+1.  <tt>Pistab</tt> a numeric vector giving estimates of selection probabilities for each penalized covariate.
 
 2.  <tt>lambda.seq</tt> a sequence of L1 penalties used.
 
-To inspect the results, we can, for instance, print the covariates with selection probability higher than 0.6:
+To inspect the results, we can, for instance, print the covariates with selection probability higher than 0.6: `r which(stable1$Pistab > 0.6)`.
 
+
+We can inspect the histogram of selection probabilities.
 ```{r}
-str(stable1)
+hist(stable1$Pistab, xlab = "Selection probability", ylab="Frequency")
+```
 
-hist(stable1$P, xlab = "Selection probability", ylab="Frequency")
+and compute variable selection classification accuracy:
+```{r}
 (tab1 <- table(stable = (stable1$P>0.65) * 1, nonzero_index))
 (tab1[1,1] + tab1[2,2])/(sum(tab1))
 
 ```
 
-
+This histrogram shows null variables in blue and signal variables in red.
 
 ```{r}
 # plotting selection probabilities for true non-zero (red) and zero (blue) coefficients
-s_prob_nonzero <- cut(stable1$P[nonzero_index == 1], breaks = seq(0,1, by = 0.1), ordered_result = T)
-s_prob_zero <- cut(stable1$P[nonzero_index == 0], breaks = seq(0,1, by = 0.1), ordered_result = T)
+s_prob_nonzero <- cut(stable1$P[nonzero_index == 1], 
+                      breaks = seq(0,1, by = 0.1), ordered_result = T)
+s_prob_zero <- cut(stable1$P[nonzero_index == 0], 
+                   breaks = seq(0,1, by = 0.1), ordered_result = T)
 
 barplot(table(s_prob_nonzero), col = 2)
 barplot(table(s_prob_zero), add =T, col = 4 )
@@ -211,18 +219,19 @@ This code implements stability selection while taking into account the block str
 
 
 ```{r eval= T}
-stable2 <- penalizedclr::stable.clr.g(response = Y, p = p,  standardize = TRUE,
-                      penalized = X, stratum = stratum,
-                      lambda.list = list(c(4,1), c(1,4)))
+stable2 <- penalizedclr::stable.clr.g(response = Y, p = p, 
+                                      standardize = TRUE,
+                                      penalized = X, stratum = stratum,
+                                      lambda.list = list(c(4,1), c(1,4)))
 
 
 ```
 
 
 
-```{r}
+```{r echo = FALSE, results = 'hide'}
 # histogram of selection probabilities
-hist(stable2$P, xlab = "Selection probability", ylab="Frequency")
+#hist(stable2$P, xlab = "Selection probability", ylab="Frequency")
 # table of true status vs. selection status
 (tab2 <- table(stable = (stable2$P>0.65) * 1, nonzero_index))
 # classification accuracy
@@ -231,12 +240,16 @@ hist(stable2$P, xlab = "Selection probability", ylab="Frequency")
 
 ```
 
+The selection probability histogram in this case.
 
-
-```{r}
+```{r, echo = F}
 # plotting selection probabilities for true non-zero (red) and zero (blue) coefficients
-s_prob_nonzero <- cut(stable2$P[nonzero_index == 1], breaks = seq(0,1, by = 0.1), ordered_result = T)
-s_prob_zero <- cut(stable2$P[nonzero_index == 0], breaks = seq(0,1, by = 0.1), ordered_result = T)
+s_prob_nonzero <- cut(stable2$P[nonzero_index == 1],
+                      breaks = seq(0,1, by = 0.1), 
+                      ordered_result = T)
+s_prob_zero <- cut(stable2$P[nonzero_index == 0],
+                   breaks = seq(0,1, by = 0.1), 
+                   ordered_result = T)
 
 barplot(table(s_prob_nonzero), col = 2)
 barplot(table(s_prob_zero), add = T, col = 4 )
@@ -246,64 +259,85 @@ barplot(table(s_prob_zero), add = T, col = 4 )
 
 #### Case 3: Data adaptive penalty parameters
 
-It is possible to obtain a data adaptive sequence of L1 penalty parameters via the functions <<tt>> default.pf>></tt>, that searches for the suitable vector of penalty factors (up to a multiplicative constant), and <tt>find.default.lambda</tt> that searches for the optimal L1 penalty for a given vector of penalty factors. 
+It is possible to obtain a data adaptive sequence of L1 penalty parameters via the functions <tt>default.pf</tt>, that searches for the suitable vector of penalty factors (up to a multiplicative constant), and <tt>find.default.lambda</tt> that searches for the optimal L1 penalty for a given vector of penalty factors. 
 
-The first function, follows the procedure proposed by Gerhard Schulze in his Master Thesis (Clinical Outcome Prediction based on Multi-Omics Data: Extension of IPF-LASSO). In short, in the first step, a tentative conditional logistic regression model is fit, either to each covariates block separately (`type.step1 = "sep"`) or to all blocks jointly (`type.step1 = "comb"`). The penalty factor for each block is then obtained as the inverse of the mean of the absolute values of the estimated coefficients of that block. In this way, blocks that contain covariates with large estimated coefficients will be penalized less in the second step. If all estimated coefficients pertaining to a block are zero, the functions returns a message. The function returns a list with penalty factors correspondng to different blocks. 
+The first function, follows the procedure proposed by Gerhard Schulze in his Master Thesis (Clinical Outcome Prediction based on Multi-Omics Data: Extension of IPF-LASSO). In short, in the first step, a tentative conditional logistic regression model is fit, either to each covariates block separately (`type.step1 = "sep"`) or to all blocks jointly (`type.step1 = "comb"`). The penalty factor for each block is then obtained as the inverse of the mean of the absolute values of the estimated coefficients of that block. In this way, blocks that contain covariates with large estimated coefficients will be penalized less. If all estimated coefficients pertaining to a block are zero, the function returns a message. The function returns a list with penalty factors corresponding to different blocks. 
 
-The second function relies on the `cv.clogitL1` function of the `clogitL1` package to perform cross-validation and, for a given vector of penalty factors, returns the value of `lambda` that   achieves the minimal cross-validated deviance, see documentation of package `clogit` for more details. 
+The second function relies on the `cv.clogitL1` function of the `clogitL1` package to perform cross-validation and, for a given vector of penalty factors, for instance obtained from `default.pf` returns the value of `lambda` that   achieves the minimal cross-validated deviance, see documentation of package 
+`clogitL1` for more details. 
 
 ```{r, eval = T}
 
-pf <- default.pf(X, Y, stratum, nfolds = 10, alpha = 0.3,
-           standardize = TRUE, p = p, type.step1 = "comb")
+(pf <- default.pf(response = Y, stratum = stratum, penalized = X, 
+                 nfolds = 10, alpha = 0.3,
+                 standardize = TRUE, p = p, type.step1 = "comb"))
 
-pf
 
-pf.list = list(pf$pf)
-pf.list
-lambda <- find.default.lambda(response = Y,penalized = X, standardize = TRUE,
-                              stratum = stratum, p = p,
-                              pf.list  = pf.list)
-lambda
-lambda.matrix <- mapply(function (x,y) x*y, lambda, pf.list)
 
-lambda.list <- lapply(seq_len(ncol(lambda.matrix)), function(i) lambda.matrix[,i])
-lambda.list
 
+(lambda <- find.default.lambda(response = Y, penalized = X, 
+                              standardize = TRUE, stratum = stratum, 
+                              p = p,  pf.list  = pf))
 ```
 
 ```{r eval= T}
-stable3 <- stable.clr.g(response = Y, p = p,  standardize = TRUE,
-                      penalized = X, stratum = stratum,
-                      lambda.list = lambda.list)
-```
-
-```{r}
-# histogram of selection probabilities
-hist(stable3$P, xlab = "Selection probability", ylab="Frequency")
-
-# table of true status vs. selection status
-(tab3 <- table(stable = (stable3$P > 0.65) * 1, nonzero_index))
-
-# classification accuracy
-(tab3[1,1] + tab3[2,2])/(sum(tab3))
+stable3 <- stable.clr.g(response = Y, p = p,  
+                        standardize = TRUE,
+                        penalized = X, stratum = stratum,
+                        lambda.list = list(c(pf[[1]][1]*as.numeric(lambda), pf[[1]][2]*as.numeric(lambda))))
 ```
 
 
 
-```{r}
+The histogram  of selection probabilities with true signal variables in red and null variables in blue. 
+
+```{r, echo = F}
 # plotting selection probabilities for true non-zero (red) and zero (blue) coefficients
-s_prob_nonzero <- cut(stable3$P[nonzero_index == 1], breaks = seq(0, 1, by = 0.1), ordered_result = T)
-s_prob_zero <- cut(stable3$P[nonzero_index == 0], breaks = seq(0, 1, by = 0.1), ordered_result = T)
+s_prob_nonzero <- cut(stable3$P[nonzero_index == 1], 
+                      breaks = seq(0, 1, by = 0.1), ordered_result = T)
+s_prob_zero <- cut(stable3$P[nonzero_index == 0],
+                   breaks = seq(0, 1, by = 0.1), ordered_result = T)
 
 barplot(table(s_prob_nonzero), col = 2)
 barplot(table(s_prob_zero), add = T, col = 4 )
 ```
 
+
+
 The user can augment the data adaptive vector of penalty factors with other vectors. 
-```{r eval = FALSE}
-pf.list<- list()
+```{r eval = T}
+alt.pf.list<- list(c(1,4), c(2,4), c(4,1), c(4,2), pf$pf)
+alt.lambda <- find.default.lambda(response = Y, penalized = X, 
+                              standardize = TRUE, stratum = stratum, 
+                              p = p,  pf.list  = alt.pf.list)
+lambda.matrix <- mapply(function (x,y) x*y, lambda, alt.pf.list)
+
+lambda.list <- lapply(seq_len(ncol(lambda.matrix)), function(i) lambda.matrix[,i])
 ```
+
+
+```{r}
+stable4 <- stable.clr.g(response = Y, p = p,  
+                        standardize = TRUE,
+                        penalized = X, stratum = stratum,
+                        lambda.list = lambda.list )
+```
+
+
+The histogram of selection probabilities:
+
+
+```{r, echo = F}
+# plotting selection probabilities for true non-zero (red) and zero (blue) coefficients
+s_prob_nonzero <- cut(stable4$P[nonzero_index == 1], 
+                      breaks = seq(0, 1, by = 0.1), ordered_result = T)
+s_prob_zero <- cut(stable4$P[nonzero_index == 0],
+                   breaks = seq(0, 1, by = 0.1), ordered_result = T)
+
+barplot(table(s_prob_nonzero), col = 2)
+barplot(table(s_prob_zero), add = T, col = 4 )
+```
+
 
 
 # References

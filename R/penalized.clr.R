@@ -60,6 +60,7 @@
 #' @importFrom stats var
 #'
 #'
+#'
 
 
 penalized.clr <- function(response,

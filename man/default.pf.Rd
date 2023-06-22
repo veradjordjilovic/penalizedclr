@@ -5,37 +5,46 @@
 \title{Data adaptive candidate vector of penalty factors for L1 penalty in conditional logistic regression with covariates divided in blocks}
 \usage{
 default.pf(
-  X,
-  Y,
+  response,
   stratum,
-  nfolds = 10,
+  penalized,
+  unpenalized = NULL,
   alpha = 1,
+  p = NULL,
   standardize = TRUE,
+  event,
+  nfolds = 10,
   type.step1,
-  p
+  verbose = F
 )
 }
 \arguments{
-\item{X}{A matrix of covariates, with the number of rows equaling the number
-of observations.}
-
-\item{Y}{A binary response variable.}
+\item{response}{The response variable, either a 0/1 vector or a factor with two levels.}
 
 \item{stratum}{A numeric vector with stratum membership of each observation.}
 
-\item{nfolds}{The number of folds used in cross-validation. Default is 10.}
+\item{penalized}{A matrix of penalized covariates.}
+
+\item{unpenalized}{A matrix of additional unpenalized covariates.}
 
 \item{alpha}{The elastic net mixing parameter, a number between 0 and 1.
 alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never obtained in this implementation since alpha must be positive.}
-
-\item{standardize}{Should the covariates be standardized, a logical value.}
-
-\item{type.step1}{Should the tentative model be fit on all covariates jointly or to each block separately.}
 
 \item{p}{The sizes of blocks of covariates,
 a numerical vector of the length equal to the number of blocks,
 and with the sum equal to the number of penalized covariates.
 If missing, all covariates are treated the same and a single penalty is applied.}
+
+\item{standardize}{Should the covariates be standardized, a logical value.}
+
+\item{event}{If response is a factor, the level that
+should be considered a success in the logistic regression.}
+
+\item{nfolds}{The number of folds used in cross-validation. Default is 10.}
+
+\item{type.step1}{Should the tentative model be fit on all covariates jointly (\code{comb}) or to each block separately (\code{sep}).}
+
+\item{verbose}{Logical. Should the message about the obtained penalty factors be printed?}
 }
 \value{
 The function returns a list containing the  vector of penalty factors correspondng to different blocks.
@@ -46,9 +55,10 @@ a tentative penalized conditional logistic regression model. The penalty for the
 as the inverse of the arithmetic mean of coefficient estimates for its covariates.
 }
 \details{
-Blocks that contain covariates with large estimated coefficients will be penalized less in the second step.
-If all estimated coefficients pertaining to a block are zero, the functions returns a message.
+Blocks that contain covariates with large estimated coefficients will obtain a smaller penalty.
+If all estimated coefficients pertaining to a block are zero, the function returns a message.
 A tentative conditional logistic regression model is fit either to each covariates block separately (\code{type.step1 = "sep"}) or  jointly to all blocks (\code{type.step1 = "comb"}).
+Note that \code{unpenalized = NULL} is the only implemented option  in this function as of now.
 }
 \references{
 Schulze G. (2017) Clinical Outcome Prediction based on Multi-Omics Data: Extension of IPF-LASSO. Master Thesis.

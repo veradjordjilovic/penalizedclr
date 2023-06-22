@@ -42,7 +42,7 @@ alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never 
 should be considered a success in the logistic regression.}
 }
 \value{
-A list with a  numeric vector \code{Pilambda}
+A list with a  numeric vector \code{Pistab}
 giving selection probabilities for each penalized covariate, and
 a sequence \code{lambda.seq} used.
 }
@@ -62,15 +62,15 @@ stratum <- sort(rep(1:100, 2))
 # the response
 Y <- rep(c(1, 0), 100)
 
-# sequence of L1 penalties
-lambda.seq <- find.default.lambda(response = Y,
+# default L1 penalty
+lambda <- find.default.lambda(response = Y,
                                    penalized = X,
                                    stratum = stratum)
 
 # perform stability selection
 \donttest{
 stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
-                         lambda.seq = lambda.seq)}
+                         lambda.seq = lambda)}
 
 
 

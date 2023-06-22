@@ -9,7 +9,7 @@
 #'
 #' @param pf.list List of vectors of penalty factors.
 #' @param nfolds The number of folds used in cross-validation. Default is 10.
-#' @return A single numeric value if \code{p} and \code{pf.list} is missing, or a list of numeric values
+#' @return A single numeric value if \code{p} and \code{pf.list} are missing, or a list of numeric values
 #' with L1 penalties for each vector of penalty factors supplied.
 #'
 #' @export
@@ -17,7 +17,7 @@
 #' @details
 #'
 #' The function is based on cross-validation implemented in the `clogitL1` package and returns
-#' the value of `lambda` that minizmes cross validated deviance.
+#' the value of `lambda` that minimizes cross validated deviance.
 #' In the presence of blocks of covariates, a user specifies a list of
 #' candidate vectors of penalty factors. For each candidate vector of penalty factors a
 #' single `lambda` value is obtained.  Note that
@@ -44,7 +44,7 @@
 #'
 #' # when `p` and `pf.list` are not provided all covariates are treated as a single block
 #' \donttest{
-#' lambda.seq <- find.default.lambda(response = Y,
+#' lambda <- find.default.lambda(response = Y,
 #'                                    penalized = X, stratum = stratum)}
 
 

@@ -9,7 +9,7 @@
 #' @param lambda.seq  a sequence of non-negative value to be used as tuning
 #'    parameter for L1
 #'
-#' @return A list with a  numeric vector \code{Pilambda}
+#' @return A list with a  numeric vector \code{Pistab}
 #'         giving selection probabilities for each penalized covariate, and
 #'         a sequence \code{lambda.seq} used.
 #'
@@ -27,15 +27,15 @@
 #' # the response
 #' Y <- rep(c(1, 0), 100)
 #'
-#' # sequence of L1 penalties
-#' lambda.seq <- find.default.lambda(response = Y,
+#' # default L1 penalty
+#' lambda <- find.default.lambda(response = Y,
 #'                                    penalized = X,
 #'                                    stratum = stratum)
 #'
 #' # perform stability selection
 #' \donttest{
 #' stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
-#'                          lambda.seq = lambda.seq)}
+#'                          lambda.seq = lambda)}
 #'
 #'
 #'
@@ -76,7 +76,7 @@ stable.clr <- function(response,
     standardize = standardize
   )
 
-  if (length(lambda.seq == 1)) {Pistab = fit$Pilambda}else{
+  if (length(lambda.seq == 1)) {Pistab = fit$Pistab}else{
   matB <- fit$matB
   if (parallel) {
     cl <- parallel::makeCluster(getOption("cl.cores", 2), setup_timeout = 0.5)
@@ -122,7 +122,7 @@ stable.clr <- function(response,
       list(lambda = res1$lambda),
       mean
     )
-    res <- t(rbind(fit$Pilambda, res2[, -c(1)]))
+    res <- t(rbind(fit$P, res2[, -c(1)]))
     parallel::stopCluster(cl)
   } else {
     res <- subsample.clr.v(
@@ -137,12 +137,15 @@ stable.clr <- function(response,
       parallel = FALSE,
       standardize = standardize
     )
-    res <- cbind(fit$Pilambda, res)
+    res <- cbind(fit$P, res)
   }
 
   Pistab <- apply(res, 1, max)
-  names(Pistab) <- names(fit$Pilambda)}
+  #names(Pistab) <- names(fit$Pistab)
+  }
+
+
   res <- list(Pistab = Pistab, lambda.seq = lambda.seq)
-  class(res) <- c("list", "penclr")
+ # class(res) <- c("list", "penclr")
   return(res)
 }
