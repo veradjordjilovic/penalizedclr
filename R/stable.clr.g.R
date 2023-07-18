@@ -109,7 +109,8 @@ stable.clr.g <- function(response,
     cl <- parallel::makeCluster(getOption("cl.cores", 2), setup_timeout = 0.5)
     parallel::clusterExport(cl, varlist = c("penalized.clr"))
 
-    temp <- lapply(lambda.list, function(x) cbind(B = 1:(2*B), matrix(rep(x, 2*B), ncol = length(x), byrow = T)))
+    temp <- lapply(lambda.list, function(x) cbind(B = 1:(2*B), matrix(rep(x, 2*B), ncol = length(x),
+                                                                      byrow = TRUE)))
     P <- do.call(rbind, temp)
 
     res <- t(parallel::parApply(cl,
@@ -143,7 +144,8 @@ stable.clr.g <- function(response,
     res <- t(res2[, -c(1:g)])
     parallel::stopCluster(cl)
   } else {
-    temp <- lapply(lambda.list, function(x) cbind(B = 1:(2*B), matrix(rep(x, 2*B), ncol = length(x), byrow = T)))
+    temp <- lapply(lambda.list, function(x) cbind(B = 1:(2*B), matrix(rep(x, 2*B), ncol = length(x),
+                                                                      byrow = TRUE)))
     P <- do.call(rbind, temp)
     res <- matrix(0, nrow = nrow(P), ncol = ncol(penalized))
     for (i in 1:nrow(P)) {

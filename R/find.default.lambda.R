@@ -69,10 +69,10 @@ find.default.lambda <- function(response, stratum, penalized,
     nc <- 0
   }
 
-  #if(standardize == T) X <- apply(X, 2, function(x)
+  #if(standardize == TRUE) X <- apply(X, 2, function(x)
   #  x/sqrt((length(x)-1)/length(x)*var(x)))
 
-  if (standardize == T) X <- scale(X)
+  if (standardize == TRUE) X <- scale(X)
 
   if(missing(p) | is.null(p)){
     lambda.seq <- default.lambda(X, response, stratum, alpha, nfolds = nfolds)
