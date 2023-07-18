@@ -8,7 +8,7 @@
 #' @param penalized A matrix of penalized covariates.
 #' @param unpenalized A matrix of additional unpenalized covariates.
 #' @param lambda The tuning parameter for L1. Either a single non-negative number,
-#'  or a numeric vector of the length equal to the number of blocks. If NULL, function `find.default.lambda` is called.  See p below.
+#'  or a numeric vector of the length equal to the number of blocks. See p below.
 #' @param alpha The elastic net mixing parameter, a number between 0 and 1.
 #'              alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never obtained in this implementation since alpha must be positive.
 #' @param p The sizes of blocks of covariates,
@@ -22,7 +22,7 @@
 #'              \itemize{
 #'                   \item \code{penalized} - Regression coefficients for the penalized covariates.
 #'                   \item \code{unpenalized} - Regression coefficients for the unpenalized covariates.
-#'                   \item \code{converged} - Whether the fitting process was judged to be converged.
+#'                   \item \code{converged} - Whether the fitting process was judged to have converged.
 #'                   \item \code{lambda} - The tuning parameter for L1 used.
 #'                   \item \code{alpha} - The elastic net mixing parameter used.
 #'                       }
@@ -53,13 +53,12 @@
 #'  obtained from `lambda` and `alpha` as `lambda*(1-alpha)/(2*alpha)`.
 #'  Note that `lambda` is a single number if all covariates are to be penalized
 #'  equally, and a vector of penatlies, if predictors are divided in blocks (of sizes provided in
-#'  `p`) that are to be penalized differently.  If `lambda` is not provided by the user,
-#'  a default value is computed by the `find.default.lambda`
-#'  function (which slows down the computation). The `penalized.clr` function
+#'  `p`) that are to be penalized differently. The `penalized.clr` function
 #'  is based on the Cox model routine available in the
 #'  `penalized` package.
 #' @importFrom survival strata
 #' @importFrom stats var
+#'
 #'
 #'
 
@@ -68,10 +67,10 @@ penalized.clr <- function(response,
                           stratum,
                           penalized,
                           unpenalized = NULL,
-                          lambda = NULL,
+                          lambda,
                           alpha = 1,
                           p = NULL,
-                          standardize = FALSE,
+                          standardize = TRUE,
                           event) {
 
   if (missing(event) && is.factor(response)) event <- levels(response)[1]
@@ -85,18 +84,8 @@ penalized.clr <- function(response,
 
 
 
-  if(is.null(lambda)){
-    lambda <- find.default.lambda(response,
-                                  stratum,
-                                  penalized,
-                                  unpenalized,
-                                  alpha,
-                                  p,
-                                  standardize,
-                                  event)
-    if (is.numeric(lambda)) {lambda <- lambda[1]} else{
-      lambda <- unlist(lapply(lambda, function(x) x[1]))
-    }
+  if(missing(lambda)){
+    stop("The argument lambda is missing with no default.")
     }else{
     if (length(lambda) > 1 && (missing(p) | is.null(p))) stop("multiple penalties are supplied in lambda, but p is missing.")
     if (length(p) != length(lambda) && !missing(p) && !is.null(p)) stop("lambda and p are not of the same length.")
@@ -115,8 +104,7 @@ penalized.clr <- function(response,
 
 
   Y <- survival::Surv(rep(1, length(response)),
-    event = (response == 1)
-  )
+    event = (response == 1))
 
 
 
@@ -127,8 +115,7 @@ penalized.clr <- function(response,
       lambda2 = lambda2,
       standardize = standardize
     )
-  }
-  else {
+  } else {
     fit <- penalized::penalized(Y ~ strata(stratum) + unpenalized,
       penalized = penalized,
       lambda1 = lambda1,

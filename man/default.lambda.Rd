@@ -7,7 +7,7 @@
 default.lambda(X, Y, stratum, nfolds = 10, alpha = 1)
 }
 \arguments{
-\item{X}{A matrix of covariates, with the number of rows equalling the number
+\item{X}{A matrix of covariates, with the number of rows equaling the number
 of observations.}
 
 \item{Y}{A binary response variable.}
@@ -20,10 +20,9 @@ of observations.}
 alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never obtained in this implementation since alpha must be positive.}
 }
 \value{
-A numeric vector of length 1 to 3 (depending on the problem)
-giving L1 penalties
+A numeric value for \code{lambda} minimizing cross validated deviance.
 }
 \description{
-Performs cross validation to determine reasonable default values for L1 penalty
+Internal function that performs cross validation to determine reasonable default values for L1 penalty
 in a conditional logistic regression
 }

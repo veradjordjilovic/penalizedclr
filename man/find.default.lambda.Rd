@@ -11,8 +11,9 @@ find.default.lambda(
   unpenalized = NULL,
   alpha = 1,
   p = NULL,
-  standardize = FALSE,
+  standardize = TRUE,
   event,
+  pf.list = NULL,
   nfolds = 10
 )
 }
@@ -38,27 +39,24 @@ If missing, all covariates are treated the same and a single penalty is applied.
 \item{event}{If response is a factor, the level that
 should be considered a success in the logistic regression.}
 
+\item{pf.list}{List of vectors of penalty factors.}
+
 \item{nfolds}{The number of folds used in cross-validation. Default is 10.}
 }
 \value{
-A numeric vector
-giving a  sequence of L1 penalties if \code{p} is missing, or a list
-of per-block penalty sequences otherwise.
+A single numeric value if \code{p} and \code{pf.list} are missing, or a list of numeric values
+with L1 penalties for each vector of penalty factors supplied.
 }
 \description{
-Performs cross validation to determine reasonable default values for L1 penalty
-in a conditional logistic regression
+Performs cross validation to determine reasonable values for L1 penalty
+in a conditional logistic regression.
 }
 \details{
-The function \code{find.default.lambda} is used to obtain a sequence of reasonable values
-of the parameter \code{lambda}. In the presence of blocks of covariates, a separate
-sequence is obtained for each block and the function returns a list. The function is
-based on cross-validation implemented in the \code{clogitL1} package. For each block,
-a separate conditional logistic model is fit (together with unpenalized covariates if provided)
-and  two \code{lambda} values a) \code{minCV_lambda} minimizing cross-validated deviance  and b) \code{minCV1se_lambda}
-satisfying 1-SE rule, are obtained. Two additional values of \code{lambda} are obtained
-as a midpoint between the two \code{(minCV_lambda + minCV1se_lambda)/2} and symmetrically \verb{(3*minCV_lambda - minCV1se_lambda)/2)}
-(on a log-scale). If \code{minCV_lambda = minCV1se_lambda}, a shorter sequnce is returned. Note that
+The function is based on cross-validation implemented in the \code{clogitL1} package and returns
+the value of \code{lambda} that minimizes cross validated deviance.
+In the presence of blocks of covariates, a user specifies a list of
+candidate vectors of penalty factors. For each candidate vector of penalty factors a
+single \code{lambda} value is obtained.  Note that
 cross-validation includes random data splitting, meaning
 that obtained values can vary significantly between different runs.
 }
@@ -67,19 +65,23 @@ set.seed(123)
 # simulate covariates (pure noise in two blocks of 20 and 80 variables)
 X <- cbind(matrix(rnorm(4000, 0, 1), ncol = 20), matrix(rnorm(16000, 2, 0.6), ncol = 80))
 p <- c(20,80)
+pf.list <- list(c(0.5, 1), c(2, 0.9))
 # stratum membership
 stratum <- sort(rep(1:100, 2))
 
 # the response
 Y <- rep(c(1, 0), 100)
 
-# obtain a list with a separate sequence for each block
+# obtain a list with vectors of penalty factors
 \donttest{
 lambda.list <- find.default.lambda(response = Y,
-                                   penalized = X, stratum = stratum, p = p)}
+                                   penalized = X, stratum = stratum, p = p, pf.list = pf.list)}
 
-# obtain a single sequence
+# when `p` and `pf.list` are not provided all covariates are treated as a single block
 \donttest{
-lambda.seq <- find.default.lambda(response = Y,
+lambda <- find.default.lambda(response = Y,
                                    penalized = X, stratum = stratum)}
+}
+\seealso{
+\link{default.pf}
 }

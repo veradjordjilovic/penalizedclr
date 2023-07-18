@@ -6,10 +6,10 @@
 #'
 #' @inheritParams penalized.clr
 #' @inheritParams subsample.clr
-#' @param lambda.seq a sequence of non-negative values to be used as tuning
-#'    parameters for L1
+#' @param lambda.seq  a sequence of non-negative value to be used as tuning
+#'    parameter for L1
 #'
-#' @return A list with a  numeric vector \code{Pilambda}
+#' @return A list with a  numeric vector \code{Pistab}
 #'         giving selection probabilities for each penalized covariate, and
 #'         a sequence \code{lambda.seq} used.
 #'
@@ -27,22 +27,16 @@
 #' # the response
 #' Y <- rep(c(1, 0), 100)
 #'
-#' # sequence of L1 penalties
-#' lambda.seq <- find.default.lambda(response = Y,
+#' # default L1 penalty
+#' lambda <- find.default.lambda(response = Y,
 #'                                    penalized = X,
 #'                                    stratum = stratum)
 #'
 #' # perform stability selection
 #' \donttest{
 #' stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
-#'                          lambda.seq = lambda.seq)}
+#'                          lambda.seq = lambda)}
 #'
-#' # when lambda.seq is not provided,
-#' # it is computed within the function (slightly different results might occur due to the
-#' # randomness inherent to cross-validation)
-#'
-#'\donttest{
-#' stable2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)}
 #'
 #'
 #' @seealso  \code{\link{stable.clr.g}} for stability selection
@@ -53,11 +47,11 @@ stable.clr <- function(response,
                        stratum,
                        penalized,
                        unpenalized = NULL,
-                       lambda.seq = NULL,
+                       lambda.seq,
                        alpha = 1,
                        B = 100,
                        parallel = TRUE,
-                       standardize = FALSE,
+                       standardize = TRUE,
                        event) {
   if (missing(event) && is.factor(response)) event <- levels(response)[1]
 
@@ -67,16 +61,6 @@ stable.clr <- function(response,
     unpenalized <- as.matrix(unpenalized, nrow = nrow(penalized))
   }
 
-  if (is.null(lambda.seq)){
-    lambda.seq <- find.default.lambda(response,
-                                      stratum,
-                                      penalized,
-                                      unpenalized,
-                                      alpha,
-                                      p = NULL,
-                                      standardize,
-                                      event)
-  }
 
   fit <- subsample.clr(
     response = response,
@@ -91,6 +75,8 @@ stable.clr <- function(response,
     parallel = parallel,
     standardize = standardize
   )
+
+  if (length(lambda.seq == 1)) {Pistab = fit$Pistab}else{
   matB <- fit$matB
   if (parallel) {
     cl <- parallel::makeCluster(getOption("cl.cores", 2), setup_timeout = 0.5)
@@ -136,7 +122,7 @@ stable.clr <- function(response,
       list(lambda = res1$lambda),
       mean
     )
-    res <- t(rbind(fit$Pilambda, res2[, -c(1)]))
+    res <- t(rbind(fit$P, res2[, -c(1)]))
     parallel::stopCluster(cl)
   } else {
     res <- subsample.clr.v(
@@ -151,10 +137,15 @@ stable.clr <- function(response,
       parallel = FALSE,
       standardize = standardize
     )
-    res <- cbind(fit$Pilambda, res)
+    res <- cbind(fit$P, res)
   }
 
   Pistab <- apply(res, 1, max)
-  names(Pistab) <- names(fit$Pilambda)
-  return(list(Pistab = Pistab, lambda.seq = lambda.seq))
+  #names(Pistab) <- names(fit$Pistab)
+  }
+
+
+  res <- list(Pistab = Pistab, lambda.seq = lambda.seq)
+ # class(res) <- c("list", "penclr")
+  return(res)
 }

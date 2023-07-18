@@ -9,10 +9,10 @@ penalized.clr(
   stratum,
   penalized,
   unpenalized = NULL,
-  lambda = NULL,
+  lambda,
   alpha = 1,
   p = NULL,
-  standardize = FALSE,
+  standardize = TRUE,
   event
 )
 }
@@ -26,7 +26,7 @@ penalized.clr(
 \item{unpenalized}{A matrix of additional unpenalized covariates.}
 
 \item{lambda}{The tuning parameter for L1. Either a single non-negative number,
-or a numeric vector of the length equal to the number of blocks. If NULL, function \code{find.default.lambda} is called.  See p below.}
+or a numeric vector of the length equal to the number of blocks. See p below.}
 
 \item{alpha}{The elastic net mixing parameter, a number between 0 and 1.
 alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never obtained in this implementation since alpha must be positive.}
@@ -46,7 +46,7 @@ A list with the following elements:
 \itemize{
 \item \code{penalized} - Regression coefficients for the penalized covariates.
 \item \code{unpenalized} - Regression coefficients for the unpenalized covariates.
-\item \code{converged} - Whether the fitting process was judged to be converged.
+\item \code{converged} - Whether the fitting process was judged to have converged.
 \item \code{lambda} - The tuning parameter for L1 used.
 \item \code{alpha} - The elastic net mixing parameter used.
 }
@@ -61,9 +61,7 @@ model for a given combination of L1 (\code{lambda}) and L2 penalties. L2 penalty
 obtained from \code{lambda} and \code{alpha} as \code{lambda*(1-alpha)/(2*alpha)}.
 Note that \code{lambda} is a single number if all covariates are to be penalized
 equally, and a vector of penatlies, if predictors are divided in blocks (of sizes provided in
-\code{p}) that are to be penalized differently.  If \code{lambda} is not provided by the user,
-a default value is computed by the \code{find.default.lambda}
-function (which slows down the computation). The \code{penalized.clr} function
+\code{p}) that are to be penalized differently. The \code{penalized.clr} function
 is based on the Cox model routine available in the
 \code{penalized} package.
 }

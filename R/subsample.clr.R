@@ -1,6 +1,6 @@
 #' Stability selection for penalized conditional logistic regression
 #'
-#'
+#' Internal function used by `stable.clr` and `stable.clr.g`.
 #'
 #' @inheritParams penalized.clr
 #' @param B A single positive number for the number of subsamples.
@@ -8,9 +8,9 @@
 #' @param return.matB Logical. Should the matrix matB be returned?
 #' @param parallel Logical. Should the computation be parallelized?
 #'
-#' @return If `return.matB` is TRUE, a list with two elements, a numeric vector Pilambda,
+#' @return If `return.matB` is TRUE, a list with two elements, a numeric vector `Pistab`,
 #'         giving selection probabilities for each covariate and a matrix `matB`;
-#'         otheriwise only Pilambda.
+#'         otheriwise only `Pistab`.
 #'
 #'
 
@@ -26,7 +26,7 @@ subsample.clr <- function(response,
                           matB = NULL,
                           return.matB = FALSE,
                           parallel = TRUE,
-                          standardize = FALSE) {
+                          standardize = TRUE) {
   ind.pair <- unique(stratum)
   b <- length(ind.pair)
   subsample.size <- ceiling(b / 2)
@@ -94,11 +94,11 @@ subsample.clr <- function(response,
       colnames(selB) <- names(fit$penalized)
     }
   }
-  Pilambda <- colMeans(selB)
+  Pistab <- colMeans(selB)
   if (return.matB) {
-    return(list("Pilambda" = Pilambda, "matB" = matB))
+    return(list("Pistab" = Pistab, "matB" = matB))
   } else {
-    return("Pilambda" = Pilambda)
+    return(list("Pistab" = Pistab))
   }
 }
 subsample.clr.v <- Vectorize(subsample.clr, vectorize.args = "lambda")

@@ -9,11 +9,11 @@ stable.clr(
   stratum,
   penalized,
   unpenalized = NULL,
-  lambda.seq = NULL,
+  lambda.seq,
   alpha = 1,
   B = 100,
   parallel = TRUE,
-  standardize = FALSE,
+  standardize = TRUE,
   event
 )
 }
@@ -26,8 +26,8 @@ stable.clr(
 
 \item{unpenalized}{A matrix of additional unpenalized covariates.}
 
-\item{lambda.seq}{a sequence of non-negative values to be used as tuning
-parameters for L1}
+\item{lambda.seq}{a sequence of non-negative value to be used as tuning
+parameter for L1}
 
 \item{alpha}{The elastic net mixing parameter, a number between 0 and 1.
 alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never obtained in this implementation since alpha must be positive.}
@@ -42,7 +42,7 @@ alpha=0 would give pure ridge; alpha=1 gives lasso. Pure ridge penalty is never 
 should be considered a success in the logistic regression.}
 }
 \value{
-A list with a  numeric vector \code{Pilambda}
+A list with a  numeric vector \code{Pistab}
 giving selection probabilities for each penalized covariate, and
 a sequence \code{lambda.seq} used.
 }
@@ -62,22 +62,16 @@ stratum <- sort(rep(1:100, 2))
 # the response
 Y <- rep(c(1, 0), 100)
 
-# sequence of L1 penalties
-lambda.seq <- find.default.lambda(response = Y,
+# default L1 penalty
+lambda <- find.default.lambda(response = Y,
                                    penalized = X,
                                    stratum = stratum)
 
 # perform stability selection
 \donttest{
 stable1 <- stable.clr(response = Y, penalized = X, stratum = stratum,
-                         lambda.seq = lambda.seq)}
+                         lambda.seq = lambda)}
 
-# when lambda.seq is not provided,
-# it is computed within the function (slightly different results might occur due to the
-# randomness inherent to cross-validation)
-
-\donttest{
-stable2 <- stable.clr.g(response = Y, penalized = X, stratum = stratum)}
 
 
 }
