@@ -6,27 +6,35 @@
 #'
 #'
 #' @inheritParams penalized.clr
-#' @param X A matrix of covariates, with the number of rows equaling the number
-#' of observations.
-#' @param Y A binary response variable.
 #' @param nfolds The number of folds used in cross-validation. Default is 10.
-#' @param type.step1 Should the tentative model be fit on all covariates jointly or to each block separately.
+#' @param type.step1 Should the tentative model be fit on all covariates jointly (`comb`) or to each block separately (`sep`).
+#' @param verbose Logical. Should the message about the obtained penalty factors be printed?
 #' @return The function returns a list containing the  vector of penalty factors correspondng to different blocks.
 #'
 #' @references  Schulze G. (2017) Clinical Outcome Prediction based on Multi-Omics Data: Extension of IPF-LASSO. Master Thesis.
 #'
 #' @export
-#' @details Blocks that contain covariates with large estimated coefficients will be penalized less in the second step.
-#' If all estimated coefficients pertaining to a block are zero, the functions returns a message.
+#' @details Blocks that contain covariates with large estimated coefficients will obtain a smaller penalty.
+#' If all estimated coefficients pertaining to a block are zero, the function returns a message.
 #' A tentative conditional logistic regression model is fit either to each covariates block separately (`type.step1 = "sep"`) or  jointly to all blocks (`type.step1 = "comb"`).
+#' Note that `unpenalized = NULL` is the only implemented option  in this function as of now.
 #' @seealso [find.default.lambda]
 
 
 
 
 
-default.pf <- function(X, Y, stratum, nfolds = 10, alpha = 1, standardize = TRUE,
-                           type.step1, p){
+default.pf <- function(response,
+                       stratum,
+                       penalized,
+                       unpenalized = NULL,
+                       alpha = 1,
+                       p = NULL,
+                       standardize = TRUE,
+                       event,
+                       nfolds = 10,
+                       type.step1,
+                       verbose = F){
   if (alpha == 1 & missing(type.step1)) {
     warning("type.step1 is set to sep")
     type.step1 <- "sep"
@@ -39,15 +47,17 @@ default.pf <- function(X, Y, stratum, nfolds = 10, alpha = 1, standardize = TRUE
     stop("type.step1 should be sep or comb")
   }
 
- # if (standardize) X <- apply(X, 2, function(x)
- #   x/sqrt((length(x)-1)/length(x)*var(x)))
 
-  if (standardize) X <- scale(X)
+  if (missing(event) && is.factor(response)) event <- levels(response)[1]
+
+  if (is.factor(response)) response <- (response == event) * 1
+
+  if (standardize) {X <- scale(penalized)}else {X <- penalized}
 
   blocks <- rep(1:length(p),  p)
 
   if (type.step1 == "comb"){
-    fit_t <- clogitL1::clogitL1(X, Y, stratum, alpha = alpha)
+    fit_t <- clogitL1::clogitL1(X, response, stratum, alpha = alpha)
     cvfit_t <- clogitL1::cv.clogitL1(fit_t, numFolds = nfolds)
     ind <- which(cvfit_t$lambda == cvfit_t$minCV1se_lambda)
     beta_est_abs <- abs(fit_t$beta[ind, ])
@@ -58,7 +68,7 @@ default.pf <- function(X, Y, stratum, nfolds = 10, alpha = 1, standardize = TRUE
   if (type.step1 == "sep") {
     means <- rep(0, length(p))
     for (i in 1:length(p)) {
-      fit_t <- clogitL1::clogitL1(X[, blocks == i], Y, stratum, alpha = alpha)
+      fit_t <- clogitL1::clogitL1(X[, blocks == i], response, stratum, alpha = alpha)
       cvfit_t <- clogitL1::cv.clogitL1(fit_t, numFolds = nfolds)
       ind <- which(cvfit_t$lambda == cvfit_t$minCV1se_lambda)
       beta_est_abs <- abs(fit_t$beta[ind, ])
@@ -70,9 +80,12 @@ default.pf <- function(X, Y, stratum, nfolds = 10, alpha = 1, standardize = TRUE
     exc <- which(means==0)
     pf <- 1/means[means!=0]
   }
-  if (is.null(exc)){print("The data adaptive vector of penalty factors is ")
-    return(list(pf = pf))}else{
-   print("The data adaptive vector of penalty factors and the  modality(ies) that have been excluded are ")
+
+  if (is.null(exc)){if (verbose)
+    {message(paste0("The data adaptive vector of penalty factors is ", pf, collapse = ""))}
+    return(list(pf = pf))}
+  else{if(verbose){
+   message(paste0("The data adaptive vector of penalty factors is ", pf," and the modality(ies) that have been excluded are ", exc, collapse =""))}
     return(list(pf = pf, exc = exc))
   }
 
