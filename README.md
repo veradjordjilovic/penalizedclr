@@ -326,8 +326,6 @@ barplot(table(s_prob_zero), add = T, col = 4 )
 
 3.  Shah, R. D., & Samworth, R. J. (2013). Variable selection with error control: another look at stability selection. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 75(1), 55-80.
 
-another look at stability selection. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 75(1), 55-80.
-
 
 
 
